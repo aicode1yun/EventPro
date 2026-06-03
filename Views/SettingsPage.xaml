@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:Ticket.ViewModels"
+             x:Class="Ticket.Views.SettingsPage"
+             x:DataType="vm:SettingsViewModel"
+             Title="Settings"
+             BackgroundColor="{StaticResource PageBackground}">
+
+    <ScrollView>
+        <VerticalStackLayout Spacing="20" Padding="20">
+            <Label Text="Settings"
+                   FontSize="28"
+                   FontAttributes="Bold"
+                   TextColor="{StaticResource TextPrimary}" />
+
+            <Label Text="Event Settings"
+                   FontSize="20"
+                   FontAttributes="Bold"
+                   TextColor="{StaticResource TextPrimary}"
+                   Margin="0,8,0,0" />
+
+            <VerticalStackLayout Spacing="6">
+                <Label Text="Event Name" FontSize="14" TextColor="{StaticResource TextPrimary}" />
+                <Border StrokeShape="RoundRectangle 8" Stroke="{StaticResource Gray300}" Padding="12,0" BackgroundColor="{StaticResource CardBackground}">
+                    <Entry Text="{Binding EventName}" Placeholder="Event name" />
+                </Border>
+            </VerticalStackLayout>
+
+            <VerticalStackLayout Spacing="6">
+                <Label Text="Event Date" FontSize="14" TextColor="{StaticResource TextPrimary}" />
+                <Border StrokeShape="RoundRectangle 8" Stroke="{StaticResource Gray300}" Padding="12,0" BackgroundColor="{StaticResource CardBackground}">
+                    <DatePicker Date="{Binding EventDate}" />
+                </Border>
+            </VerticalStackLayout>
+
+            <VerticalStackLayout Spacing="6">
+                <Label Text="Venue" FontSize="14" TextColor="{StaticResource TextPrimary}" />
+                <Border StrokeShape="RoundRectangle 8" Stroke="{StaticResource Gray300}" Padding="12,0" BackgroundColor="{StaticResource CardBackground}">
+                    <Entry Text="{Binding Venue}" Placeholder="Venue name" />
+                </Border>
+            </VerticalStackLayout>
+
+            <VerticalStackLayout Spacing="6">
+                <Label Text="Description" FontSize="14" TextColor="{StaticResource TextPrimary}" />
+                <Border StrokeShape="RoundRectangle 8" Stroke="{StaticResource Gray300}" Padding="12,0" BackgroundColor="{StaticResource CardBackground}">
+                    <Editor Text="{Binding Description}" Placeholder="Event description..." HeightRequest="80" />
+                </Border>
+            </VerticalStackLayout>
+
+            <Button Text="Save Event Settings"
+                    Command="{Binding SaveEventCommand}"
+                    BackgroundColor="{StaticResource Primary}"
+                    TextColor="White"
+                    FontAttributes="Bold"
+                    FontSize="16"
+                    HeightRequest="50"
+                    CornerRadius="12" />
+
+            <BoxView HeightRequest="1" Color="{StaticResource Gray200}" Margin="0,8" />
+
+            <Label Text="{Binding AppVersion, StringFormat='Version {0}'}"
+                   FontSize="14"
+                   TextColor="{StaticResource Gray500}"
+                   HorizontalOptions="Center" />
+
+            <Button Text="Logout"
+                    Command="{Binding LogoutCommand}"
+                    BackgroundColor="{StaticResource Danger}"
+                    TextColor="White"
+                    FontSize="16"
+                    CornerRadius="12"
+                    HeightRequest="50" />
+
+            <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" Color="{StaticResource Primary}" />
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>

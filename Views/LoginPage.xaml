@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:Ticket.ViewModels"
+             x:Class="Ticket.Views.LoginPage"
+             x:DataType="vm:LoginViewModel"
+             Shell.NavBarIsVisible="False"
+             BackgroundColor="{StaticResource PageBackground}">
+
+    <ScrollView>
+        <VerticalStackLayout Spacing="24" Padding="32" VerticalOptions="Center">
+            <VerticalStackLayout Spacing="8" Margin="0,60,0,0">
+                <Label Text="EventPro"
+                       FontSize="36"
+                       FontAttributes="Bold"
+                       TextColor="{StaticResource Primary}"
+                       HorizontalOptions="Center" />
+                <Label Text="Ticket Management"
+                       FontSize="16"
+                       TextColor="{StaticResource Gray600}"
+                       HorizontalOptions="Center" />
+            </VerticalStackLayout>
+
+            <BoxView HeightRequest="1" Color="{StaticResource Gray200}" Margin="0,8" />
+
+            <VerticalStackLayout Spacing="6">
+                <Label Text="Email" FontSize="14" TextColor="{StaticResource TextPrimary}" />
+                <Border StrokeShape="RoundRectangle 8" Stroke="{StaticResource Gray300}" Padding="12,0" BackgroundColor="{StaticResource CardBackground}">
+                    <Entry Text="{Binding Email}"
+                           Placeholder="admin@eventpro.com"
+                           Keyboard="Email"
+                           ReturnType="Next" />
+                </Border>
+            </VerticalStackLayout>
+
+            <VerticalStackLayout Spacing="6">
+                <Label Text="Password" FontSize="14" TextColor="{StaticResource TextPrimary}" />
+                <Border StrokeShape="RoundRectangle 8" Stroke="{StaticResource Gray300}" Padding="12,0" BackgroundColor="{StaticResource CardBackground}">
+                    <Entry Text="{Binding Password}"
+                           Placeholder="Enter password"
+                           IsPassword="True"
+                           ReturnType="Done" />
+                </Border>
+            </VerticalStackLayout>
+
+            <HorizontalStackLayout Spacing="8">
+                <CheckBox IsChecked="{Binding RememberMe}" Color="{StaticResource Primary}" />
+                <Label Text="Remember me" FontSize="14" VerticalOptions="Center" TextColor="{StaticResource TextPrimary}" />
+            </HorizontalStackLayout>
+
+            <Label Text="{Binding ErrorMessage}"
+                   TextColor="{StaticResource Danger}"
+                   FontSize="14"
+                   IsVisible="{Binding HasError}"
+                   HorizontalOptions="Center" />
+
+            <Button Text="Sign In"
+                    Command="{Binding LoginCommand}"
+                    BackgroundColor="{StaticResource Primary}"
+                    TextColor="White"
+                    FontAttributes="Bold"
+                    FontSize="16"
+                    HeightRequest="50"
+                    CornerRadius="12" />
+
+            <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" Color="{StaticResource Primary}" />
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>

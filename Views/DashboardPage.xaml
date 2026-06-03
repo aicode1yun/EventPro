@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:Ticket.ViewModels"
+             xmlns:comp="clr-namespace:Ticket.Components"
+             x:Class="Ticket.Views.DashboardPage"
+             x:DataType="vm:DashboardViewModel"
+             Title="Dashboard"
+             BackgroundColor="{StaticResource PageBackground}">
+
+    <RefreshView IsRefreshing="{Binding IsBusy}" Command="{Binding LoadStatsCommand}">
+        <ScrollView>
+            <VerticalStackLayout Spacing="20" Padding="20">
+                <Label Text="Dashboard"
+                       FontSize="28"
+                       FontAttributes="Bold"
+                       TextColor="{StaticResource TextPrimary}" />
+
+                <Label x:Name="DateLabel"
+                       FontSize="14"
+                       TextColor="{StaticResource Gray600}" />
+
+                <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto" ColumnSpacing="12" RowSpacing="12">
+                    <comp:StatCard Icon="&#xf0c0;" Value="{Binding TotalParticipants}" CardTitle="Total Registered"
+                                   Grid.Row="0" Grid.Column="0" />
+                    <comp:StatCard Icon="&#xf00c;" Value="{Binding CheckedInCount}" CardTitle="Checked In"
+                                   Grid.Row="0" Grid.Column="1" />
+                    <comp:StatCard Icon="&#xf252;" Value="{Binding RemainingCount}" CardTitle="Remaining"
+                                   Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" />
+                </Grid>
+
+                <Label Text="Quick Actions"
+                       FontSize="20"
+                       FontAttributes="Bold"
+                       TextColor="{StaticResource TextPrimary}"
+                       Margin="0,8,0,0" />
+
+                <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto" ColumnSpacing="12" RowSpacing="12">
+                    <Border StrokeShape="RoundRectangle 12"
+                            BackgroundColor="{StaticResource Primary}"
+                            HeightRequest="80"
+                            Padding="16"
+                            Grid.Row="0" Grid.Column="0">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding GoToRegisterCommand}" />
+                        </Border.GestureRecognizers>
+                        <HorizontalStackLayout Spacing="8" VerticalOptions="Center" HorizontalOptions="Center">
+                            <Label Text="&#xf328;" FontFamily="FAS" TextColor="White" FontSize="20" VerticalOptions="Center" />
+                            <Label Text="Register Participant" TextColor="White" FontSize="14" VerticalOptions="Center" />
+                        </HorizontalStackLayout>
+                    </Border>
+                    <Border StrokeShape="RoundRectangle 12"
+                            BackgroundColor="{StaticResource Accent}"
+                            HeightRequest="80"
+                            Padding="16"
+                            Grid.Row="0" Grid.Column="1">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding GoToScanCommand}" />
+                        </Border.GestureRecognizers>
+                        <HorizontalStackLayout Spacing="8" VerticalOptions="Center" HorizontalOptions="Center">
+                            <Label Text="&#xf030;" FontFamily="FAS" TextColor="White" FontSize="20" VerticalOptions="Center" />
+                            <Label Text="Scan Ticket" TextColor="White" FontSize="14" VerticalOptions="Center" />
+                        </HorizontalStackLayout>
+                    </Border>
+                    <Border StrokeShape="RoundRectangle 12"
+                            BackgroundColor="{StaticResource PrimaryDark}"
+                            HeightRequest="80"
+                            Padding="16"
+                            Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding GoToParticipantsCommand}" />
+                        </Border.GestureRecognizers>
+                        <HorizontalStackLayout Spacing="8" VerticalOptions="Center" HorizontalOptions="Center">
+                            <Label Text="&#xf0c0;" FontFamily="FAS" TextColor="White" FontSize="20" VerticalOptions="Center" />
+                            <Label Text="View Participants" TextColor="White" FontSize="14" VerticalOptions="Center" />
+                        </HorizontalStackLayout>
+                    </Border>
+                </Grid>
+            </VerticalStackLayout>
+        </ScrollView>
+    </RefreshView>
+
+</ContentPage>

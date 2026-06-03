@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:Ticket.ViewModels"
+             x:Class="Ticket.Views.TicketPreviewPage"
+             x:DataType="vm:TicketPreviewViewModel"
+             Title="Ticket"
+             BackgroundColor="{StaticResource PageBackground}">
+
+    <ScrollView>
+        <VerticalStackLayout Spacing="20" Padding="20">
+            <Label Text="Your Ticket"
+                   FontSize="28"
+                   FontAttributes="Bold"
+                   TextColor="{StaticResource Primary}"
+                   HorizontalOptions="Center" />
+
+            <Border StrokeShape="RoundRectangle 12"
+                    Stroke="{StaticResource Gray200}"
+                    BackgroundColor="{StaticResource CardBackground}"
+                    Padding="6"
+                    Shadow="{StaticResource CardShadow}">
+                <Image Source="{Binding TicketImage}"
+                       Aspect="AspectFit"
+                       WidthRequest="360"
+                       HorizontalOptions="Center" />
+            </Border>
+
+            <Border StrokeShape="RoundRectangle 25"
+                    BackgroundColor="#10B981"
+                    HeightRequest="50"
+                    Padding="16">
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding SaveToGalleryCommand}" />
+                </Border.GestureRecognizers>
+                <HorizontalStackLayout Spacing="8" VerticalOptions="Center" HorizontalOptions="Center">
+                    <Label Text="&#xf0c7;" FontFamily="FAS" TextColor="White" FontSize="18" VerticalOptions="Center" />
+                    <Label Text="Save to Gallery" TextColor="White" FontSize="16" FontAttributes="Bold" VerticalOptions="Center" />
+                </HorizontalStackLayout>
+            </Border>
+
+            <Label Text="&#x2713;  Saved to Gallery"
+                   FontFamily="FAS"
+                   FontSize="14"
+                   TextColor="#10B981"
+                   HorizontalOptions="Center"
+                   IsVisible="{Binding SaveDone}" />
+
+            <Border StrokeShape="RoundRectangle 25"
+                    BackgroundColor="{StaticResource Accent}"
+                    HeightRequest="50"
+                    Padding="16">
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding ShareTicketCommand}" />
+                </Border.GestureRecognizers>
+                <HorizontalStackLayout Spacing="8" VerticalOptions="Center" HorizontalOptions="Center">
+                    <Label Text="&#xf1e0;" FontFamily="FAS" TextColor="White" FontSize="18" VerticalOptions="Center" />
+                    <Label Text="Share Ticket" TextColor="White" FontSize="16" FontAttributes="Bold" VerticalOptions="Center" />
+                </HorizontalStackLayout>
+            </Border>
+
+            <Border StrokeShape="RoundRectangle 25"
+                    BackgroundColor="{StaticResource Primary}"
+                    HeightRequest="50"
+                    Padding="16">
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding DoneCommand}" />
+                </Border.GestureRecognizers>
+                <HorizontalStackLayout Spacing="8" VerticalOptions="Center" HorizontalOptions="Center">
+                    <Label Text="Done" TextColor="White" FontSize="16" FontAttributes="Bold" VerticalOptions="Center" />
+                </HorizontalStackLayout>
+            </Border>
+
+            <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" Color="{StaticResource Primary}" />
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>

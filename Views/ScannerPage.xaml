@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:Ticket.ViewModels"
+             xmlns:zxing="clr-namespace:ZXing.Net.Maui.Controls;assembly=ZXing.Net.Maui.Controls"
+             x:Class="Ticket.Views.ScannerPage"
+             x:DataType="vm:ScannerViewModel"
+             Title="Scan">
+
+    <Grid>
+        <zxing:CameraBarcodeReaderView x:Name="BarcodeReader"
+                                        IsDetecting="{Binding IsScanning}"
+                                        BarcodesDetected="OnBarcodesDetected"
+                                        VerticalOptions="Fill"
+                                        HorizontalOptions="Fill" />
+
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="260" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="260" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <BoxView Grid.Row="0" Grid.ColumnSpan="3" Color="#80000000" />
+            <BoxView Grid.Row="2" Grid.ColumnSpan="3" Color="#80000000" />
+            <BoxView Grid.Column="0" Grid.RowSpan="3" Color="#80000000" />
+            <BoxView Grid.Column="2" Grid.RowSpan="3" Color="#80000000" />
+
+            <Border Grid.Row="1" Grid.Column="1"
+                    BackgroundColor="Transparent"
+                    StrokeShape="RoundRectangle 16"
+                    Stroke="White" StrokeThickness="2"
+                    StrokeDashArray="8,4" />
+
+            <Label Grid.Row="0" Grid.Column="1"
+                   Text="Point camera at QR code"
+                   FontSize="16" TextColor="White"
+                   VerticalOptions="End" HorizontalOptions="Center"
+                   Margin="0,0,0,20" />
+
+            <Button Grid.Row="2" Grid.Column="1" x:Name="TorchButton"
+                    Clicked="OnTorchClicked"
+                    FontFamily="FAS"
+                    Text="&#xf0e7;"
+                    FontSize="22"
+                    TextColor="#000000"
+                    Opacity="{Binding IsTorchOn, Converter={StaticResource BoolToTorchOpactiy}}"
+                    CornerRadius="22"
+                    HeightRequest="44" WidthRequest="44"
+                    VerticalOptions="Start" HorizontalOptions="Center"
+                    Margin="0,16,0,0" />
+        </Grid>
+
+
+    </Grid>
+
+</ContentPage>

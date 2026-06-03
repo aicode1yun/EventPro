@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Ticket.Components.StatCard">
+
+    <Border StrokeShape="RoundRectangle 12"
+            Stroke="{StaticResource Gray200}"
+            BackgroundColor="{StaticResource CardBackground}"
+            Padding="16"
+            Shadow="{StaticResource CardShadow}">
+        <VerticalStackLayout Spacing="8">
+            <Label x:Name="IconLabel"
+                   FontSize="28"
+                   FontFamily="FAS"
+                   HorizontalOptions="Center" />
+            <Label x:Name="ValueLabel"
+                   FontSize="32"
+                   FontAttributes="Bold"
+                   HorizontalOptions="Center"
+                   TextColor="{StaticResource Primary}" />
+            <Label x:Name="TitleLabel"
+                   FontSize="14"
+                   HorizontalOptions="Center"
+                   TextColor="{StaticResource Gray600}" />
+        </VerticalStackLayout>
+    </Border>
+
+</ContentView>

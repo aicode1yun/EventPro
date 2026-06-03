@@ -1,0 +1,64 @@
+## .NET
+bin/
+obj/
+*.user
+*.suo
+*.cache
+*.log
+*.dtc
+*.csproj.user
+*.dbmdl
+*.jfm
+*.vs/
+*.DotSettings
+
+## Visual Studio
+.vs/
+*.sln.docstates
+
+## JetBrains Rider
+.idea/
+*.sln.iml
+
+## macOS
+.DS_Store
+
+## Android
+*.apk
+*.aab
+local.properties
+
+## NuGet
+packages/
+*.nupkg
+
+## Build results
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Ww][Ii][Nn]32/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
+## Test results
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+
+## NUnit
+*.VisualState.xml
+TestResult.xml
+nunit-*.xml
+
+## Benchmark
+BenchmarkDotNet.Artifacts/
+
+## Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini

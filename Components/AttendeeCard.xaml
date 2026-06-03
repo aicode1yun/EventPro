@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Ticket.Components.AttendeeCard">
+
+    <Border StrokeShape="RoundRectangle 12"
+            Stroke="{StaticResource Gray200}"
+            BackgroundColor="{StaticResource CardBackground}"
+            Padding="16"
+            Shadow="{StaticResource CardShadow}">
+        <Grid ColumnDefinitions="48,*,Auto" ColumnSpacing="12">
+            <Border StrokeShape="RoundRectangle 24"
+                    WidthRequest="48" HeightRequest="48"
+                    BackgroundColor="{StaticResource PrimaryLight}"
+                    VerticalOptions="Center">
+                <Label x:Name="InitialsLabel"
+                       FontSize="18"
+                       FontAttributes="Bold"
+                       TextColor="{StaticResource Primary}"
+                       HorizontalOptions="Center"
+                       VerticalOptions="Center" />
+            </Border>
+
+            <VerticalStackLayout Grid.Column="1" Spacing="4" VerticalOptions="Center">
+                <Label x:Name="NameLabel"
+                       FontSize="16"
+                       FontAttributes="Bold"
+                       TextColor="{StaticResource TextPrimary}" />
+                <Label x:Name="TicketCodeLabel"
+                       FontSize="12"
+                       TextColor="{StaticResource Gray600}" />
+                <HorizontalStackLayout Spacing="8">
+                    <Label x:Name="TicketTypeLabel"
+                           FontSize="12"
+                           TextColor="{StaticResource Gray500}" />
+                    <Label x:Name="DateLabel"
+                           FontSize="12"
+                           TextColor="{StaticResource Gray400}" />
+                </HorizontalStackLayout>
+            </VerticalStackLayout>
+
+            <Border x:Name="StatusBadge"
+                    Grid.Column="2"
+                    StrokeShape="RoundRectangle 8"
+                    Padding="8,4"
+                    VerticalOptions="Center">
+                <Label x:Name="StatusLabel"
+                       FontSize="11"
+                       FontAttributes="Bold"
+                       TextColor="White" />
+            </Border>
+        </Grid>
+    </Border>
+
+</ContentView>

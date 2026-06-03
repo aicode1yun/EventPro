@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:Ticket.ViewModels"
+             xmlns:comp="clr-namespace:Ticket.Components"
+             xmlns:models="clr-namespace:Ticket.Models"
+             x:Class="Ticket.Views.ParticipantsPage"
+             x:DataType="vm:ParticipantsViewModel"
+             Title="Participants"
+             BackgroundColor="{StaticResource PageBackground}">
+
+    <RefreshView IsRefreshing="{Binding IsBusy}" Command="{Binding LoadAttendeesCommand}">
+        <Grid RowDefinitions="Auto,Auto,*" Padding="20" RowSpacing="12">
+            <Label Text="Participants"
+                   FontSize="24"
+                   FontAttributes="Bold"
+                   TextColor="{StaticResource TextPrimary}" />
+
+            <VerticalStackLayout Grid.Row="1" Spacing="12">
+                <Border StrokeShape="RoundRectangle 8" Stroke="{StaticResource Gray300}" Padding="12,0" BackgroundColor="{StaticResource CardBackground}">
+                    <Entry Placeholder="Search by name, ticket code, phone..."
+                           Text="{Binding SearchText}"
+                           ReturnType="Search" />
+                </Border>
+
+                <HorizontalStackLayout Spacing="8" BindableLayout.ItemsSource="{Binding FilterChips}">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="models:FilterChip">
+                            <Border StrokeShape="RoundRectangle 16"
+                                    Padding="14,6"
+                                    BackgroundColor="{Binding IsSelected, Converter={StaticResource BoolToFilterBg}}">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ParticipantsViewModel}}, Path=SelectFilterCommand}"
+                                                          CommandParameter="{Binding Text}" />
+                                </Border.GestureRecognizers>
+                                <Label Text="{Binding Text}"
+                                       FontSize="13"
+                                       TextColor="{Binding IsSelected, Converter={StaticResource BoolToFilterText}}" />
+                            </Border>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </HorizontalStackLayout>
+            </VerticalStackLayout>
+
+            <CollectionView ItemsSource="{Binding Attendees}"
+                            Grid.Row="2"
+                            SelectionMode="Single"
+                            SelectionChangedCommand="{Binding ViewDetailCommand}"
+                            SelectionChangedCommandParameter="{Binding SelectedItem, Source={RelativeSource Self}}">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="models:Attendee">
+                        <VerticalStackLayout Padding="0,4">
+                            <comp:AttendeeCard Attendee="{Binding .}" />
+                        </VerticalStackLayout>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+                <CollectionView.EmptyView>
+                    <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center" Spacing="8">
+                        <Label Text="No participants yet" FontSize="18" TextColor="{StaticResource Gray500}" HorizontalOptions="Center" />
+                        <Label Text="Register your first participant to get started" FontSize="14" TextColor="{StaticResource Gray400}" HorizontalOptions="Center" />
+                    </VerticalStackLayout>
+                </CollectionView.EmptyView>
+            </CollectionView>
+        </Grid>
+    </RefreshView>
+
+</ContentPage>

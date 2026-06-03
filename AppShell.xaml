@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="Ticket.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:views="clr-namespace:Ticket.Views"
+    Shell.FlyoutBehavior="Disabled"
+    Shell.BackgroundColor="White"
+    Shell.ForegroundColor="#1F2937"
+    Shell.TitleColor="#1F2937"
+    Shell.UnselectedColor="#9CA3AF">
+
+    <ShellContent Route="login"
+                  ContentTemplate="{DataTemplate views:LoginPage}"
+                  Shell.NavBarIsVisible="False"
+                  Shell.TabBarIsVisible="False" />
+
+    <TabBar Route="main">
+        <ShellContent Route="dashboard"
+                      Title="Dashboard"
+                      ContentTemplate="{DataTemplate views:DashboardPage}">
+            <ShellContent.Icon>
+                <FontImageSource Glyph="&#xf080;" FontFamily="FAS" />
+            </ShellContent.Icon>
+        </ShellContent>
+        <ShellContent Route="register"
+                      Title="Register"
+                      ContentTemplate="{DataTemplate views:RegisterParticipantPage}">
+            <ShellContent.Icon>
+                <FontImageSource Glyph="&#xf328;" FontFamily="FAS" />
+            </ShellContent.Icon>
+        </ShellContent>
+        <ShellContent Route="scan"
+                      Title="Scan"
+                      ContentTemplate="{DataTemplate views:ScannerPage}">
+            <ShellContent.Icon>
+                <FontImageSource Glyph="&#xf030;" FontFamily="FAS" />
+            </ShellContent.Icon>
+        </ShellContent>
+        <ShellContent Route="participants"
+                      Title="Attendees"
+                      ContentTemplate="{DataTemplate views:ParticipantsPage}">
+            <ShellContent.Icon>
+                <FontImageSource Glyph="&#xf0c0;" FontFamily="FAS" />
+            </ShellContent.Icon>
+        </ShellContent>
+        <ShellContent Route="settings"
+                      Title="Settings"
+                      ContentTemplate="{DataTemplate views:SettingsPage}">
+            <ShellContent.Icon>
+                <FontImageSource Glyph="&#xf013;" FontFamily="FAS" />
+            </ShellContent.Icon>
+        </ShellContent>
+    </TabBar>
+
+</Shell>
