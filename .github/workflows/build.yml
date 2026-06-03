@@ -1,0 +1,55 @@
+name: Build & Release
+
+on:
+  push:
+    branches: [master]
+    tags: ["v*"]
+  workflow_dispatch:
+
+jobs:
+  build-android:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Install MAUI workload
+        run: dotnet workload install maui
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Publish Android APK
+        run: dotnet publish -f net10.0-android -c Release
+
+      - name: Upload APK as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: EventPro-APK
+          path: bin/Release/net10.0-android/*-Signed.apk
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: build-android
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download APK
+        uses: actions/download-artifact@v4
+        with:
+          name: EventPro-APK
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: EventPro ${{ github.ref_name }}
+          body: |
+            ## EventPro ${{ github.ref_name }}
+
+            Download the APK below and install it on your Android device.
+          files: "*.apk"
