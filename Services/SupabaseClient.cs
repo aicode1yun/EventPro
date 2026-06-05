@@ -183,11 +183,18 @@ namespace Ticket.Services
 
         private async Task<string?> UploadFileAsync(string bucket, string fileName, Stream fileStream, string contentType)
         {
-            var request = new HttpRequestMessage(HttpMethod.Post, $"/storage/v1/object/{bucket}/{fileName}?upsert=true")
+            if (fileStream.Length == 0)
+                throw new InvalidOperationException("Photo file is empty.");
+
+            if (fileStream.CanSeek)
+                fileStream.Position = 0;
+
+            var request = new HttpRequestMessage(HttpMethod.Post, $"/storage/v1/object/{bucket}/{fileName}")
             {
                 Content = new StreamContent(fileStream)
             };
             request.Content.Headers.ContentType = new MediaTypeHeaderValue(contentType);
+            request.Headers.Add("x-upsert", "true");
 
             var response = await _httpClient.SendAsync(request);
             if (!response.IsSuccessStatusCode)

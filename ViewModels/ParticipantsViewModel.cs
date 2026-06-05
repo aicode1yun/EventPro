@@ -106,9 +106,16 @@ namespace Ticket.ViewModels
             var confirm = await PopupHelper.ShowConfirmAsync("Delete", $"Delete {attendee.FullName}?", "Yes", "No");
             if (!confirm) return;
 
-            await _supabase.DeleteAttendeeAsync(attendee);
-            _allAttendees.Remove(attendee);
-            Attendees.Remove(attendee);
+            try
+            {
+                await _supabase.DeleteAttendeeAsync(attendee);
+                _allAttendees.Remove(attendee);
+                Attendees.Remove(attendee);
+            }
+            catch (Exception ex)
+            {
+                await PopupHelper.ShowErrorToastAsync(ex.Message);
+            }
         }
 
         [RelayCommand]

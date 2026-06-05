@@ -42,14 +42,14 @@ namespace Ticket.Services
                 Text = message,
                 ActionButtonText = confirmText,
                 SecondaryActionButtonText = cancelText,
-                ActionButtonCommand = new Command(() =>
+                ActionButtonCommand = new Command(async () =>
                 {
-                    IPopupService.Current.PopAsync();
+                    try { await IPopupService.Current.PopAsync(); } catch { }
                     tcs.TrySetResult(true);
                 }),
-                SecondaryActionButtonCommand = new Command(() =>
+                SecondaryActionButtonCommand = new Command(async () =>
                 {
-                    IPopupService.Current.PopAsync();
+                    try { await IPopupService.Current.PopAsync(); } catch { }
                     tcs.TrySetResult(false);
                 })
             };

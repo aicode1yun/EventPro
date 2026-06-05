@@ -55,7 +55,11 @@
                                     <SwipeItem Text="Delete"
                                                BackgroundColor="#EF4444"
                                                Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ParticipantsViewModel}}, Path=DeleteAttendeeCommand}"
-                                               CommandParameter="{Binding .}" />
+                                               CommandParameter="{Binding .}">
+                                        <SwipeItem.IconImageSource>
+                                            <FontImageSource Glyph="&#xf2ed;" FontFamily="FAS" Color="White" Size="20" />
+                                        </SwipeItem.IconImageSource>
+                                    </SwipeItem>
                                 </SwipeItems>
                             </SwipeView.RightItems>
                             <VerticalStackLayout Padding="0,4">

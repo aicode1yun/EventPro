@@ -80,6 +80,22 @@ namespace Ticket.ViewModels
                     }
                 }
 
+#if ANDROID
+                if (!OperatingSystem.IsAndroidVersionAtLeast(29))
+                {
+                    var storageStatus = await Permissions.CheckStatusAsync<Permissions.StorageWrite>();
+                    if (storageStatus != PermissionStatus.Granted)
+                    {
+                        storageStatus = await Permissions.RequestAsync<Permissions.StorageWrite>();
+                        if (storageStatus != PermissionStatus.Granted)
+                        {
+                            await PopupHelper.ShowWarningToastAsync("Storage permission is required to save photos.");
+                            return;
+                        }
+                    }
+                }
+#endif
+
                 var photo = await MediaPicker.CapturePhotoAsync();
                 if (photo is null) return;
 
