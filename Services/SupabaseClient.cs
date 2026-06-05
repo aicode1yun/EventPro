@@ -183,30 +183,32 @@ namespace Ticket.Services
 
         private async Task<string?> UploadFileAsync(string bucket, string fileName, Stream fileStream, string contentType)
         {
-            try
+            var request = new HttpRequestMessage(HttpMethod.Post, $"/storage/v1/object/{bucket}/{fileName}?upsert=true")
             {
-                var request = new HttpRequestMessage(HttpMethod.Post, $"/storage/v1/object/{bucket}/{fileName}")
-                {
-                    Content = new StreamContent(fileStream)
-                };
-                request.Content.Headers.ContentType = new MediaTypeHeaderValue(contentType);
+                Content = new StreamContent(fileStream)
+            };
+            request.Content.Headers.ContentType = new MediaTypeHeaderValue(contentType);
 
-                var response = await _httpClient.SendAsync(request);
-                if (!response.IsSuccessStatusCode) return null;
-
-                return $"{_supabaseUrl}/storage/v1/object/public/{bucket}/{fileName}";
-            }
-            catch
+            var response = await _httpClient.SendAsync(request);
+            if (!response.IsSuccessStatusCode)
             {
-                return null;
+                var error = await response.Content.ReadAsStringAsync();
+                throw new InvalidOperationException($"Photo upload failed ({response.StatusCode}): {error}");
             }
+
+            return $"{_supabaseUrl}/storage/v1/object/public/{bucket}/{fileName}";
         }
 
         private async Task<bool> DeleteFileAsync(string bucket, string fileName)
         {
             try
             {
-                var request = new HttpRequestMessage(HttpMethod.Delete, $"/storage/v1/object/{bucket}/{fileName}");
+                var body = new { prefixes = new[] { fileName } };
+                var json = JsonSerializer.Serialize(body);
+                var request = new HttpRequestMessage(HttpMethod.Delete, $"/storage/v1/object/{bucket}")
+                {
+                    Content = new StringContent(json, Encoding.UTF8, "application/json")
+                };
                 var response = await _httpClient.SendAsync(request);
                 return response.IsSuccessStatusCode;
             }

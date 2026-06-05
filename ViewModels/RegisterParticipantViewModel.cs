@@ -69,6 +69,17 @@ namespace Ticket.ViewModels
                     return;
                 }
 
+                var cameraStatus = await Permissions.CheckStatusAsync<Permissions.Camera>();
+                if (cameraStatus != PermissionStatus.Granted)
+                {
+                    cameraStatus = await Permissions.RequestAsync<Permissions.Camera>();
+                    if (cameraStatus != PermissionStatus.Granted)
+                    {
+                        await PopupHelper.ShowWarningToastAsync("Camera permission is required to take photos.");
+                        return;
+                    }
+                }
+
                 var photo = await MediaPicker.CapturePhotoAsync();
                 if (photo is null) return;
 

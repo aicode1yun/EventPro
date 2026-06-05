@@ -49,9 +49,19 @@
                             SelectionChangedCommandParameter="{Binding SelectedItem, Source={RelativeSource Self}}">
                 <CollectionView.ItemTemplate>
                     <DataTemplate x:DataType="models:Attendee">
-                        <VerticalStackLayout Padding="0,4">
-                            <comp:AttendeeCard Attendee="{Binding .}" />
-                        </VerticalStackLayout>
+                        <SwipeView>
+                            <SwipeView.RightItems>
+                                <SwipeItems Mode="Reveal">
+                                    <SwipeItem Text="Delete"
+                                               BackgroundColor="#EF4444"
+                                               Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ParticipantsViewModel}}, Path=DeleteAttendeeCommand}"
+                                               CommandParameter="{Binding .}" />
+                                </SwipeItems>
+                            </SwipeView.RightItems>
+                            <VerticalStackLayout Padding="0,4">
+                                <comp:AttendeeCard Attendee="{Binding .}" />
+                            </VerticalStackLayout>
+                        </SwipeView>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
                 <CollectionView.EmptyView>
