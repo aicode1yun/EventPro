@@ -1,5 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
+	<PropertyGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android' And '$(Configuration)' == 'Release'">
+		<AndroidKeyStore>True</AndroidKeyStore>
+		<AndroidSigningKeyStore>Platforms\Android\EventPro.keystore</AndroidSigningKeyStore>
+		<AndroidSigningKeyAlias>EventPro</AndroidSigningKeyAlias>
+		<AndroidSigningKeyPass>EventPro123</AndroidSigningKeyPass>
+		<AndroidSigningStorePass>EventPro123</AndroidSigningStorePass>
+	</PropertyGroup>
+
 	<PropertyGroup>
 		<TargetFrameworks>net10.0-android</TargetFrameworks>
 		<TargetFrameworks Condition="!$([MSBuild]::IsOSPlatform('linux'))">$(TargetFrameworks);net10.0-ios;net10.0-maccatalyst</TargetFrameworks>

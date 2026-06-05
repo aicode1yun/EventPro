@@ -23,6 +23,18 @@ jobs:
       - name: Restore dependencies
         run: dotnet restore
 
+      - name: Set version from tag
+        if: startsWith(github.ref, 'refs/tags/v')
+        shell: pwsh
+        run: |
+          $tag = "${{ github.ref_name }}"
+          $version = $tag.TrimStart('v')
+          $parts = $version.Split('.')
+          $versionCode = [int]$parts[0] * 10000 + [int]$parts[1] * 100 + [int]$parts[2]
+          (Get-Content Ticket.csproj) -replace '<ApplicationDisplayVersion>.*</ApplicationDisplayVersion>', "<ApplicationDisplayVersion>$version</ApplicationDisplayVersion>" | Set-Content Ticket.csproj
+          (Get-Content Ticket.csproj) -replace '<ApplicationVersion>.*</ApplicationVersion>', "<ApplicationVersion>$versionCode</ApplicationVersion>" | Set-Content Ticket.csproj
+          Write-Host "Set version to $version ($versionCode)"
+
       - name: Publish Android APK
         run: dotnet publish -f net10.0-android -c Release
 
