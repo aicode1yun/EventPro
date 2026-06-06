@@ -64,6 +64,19 @@ CREATE POLICY "Authenticated users can update events"
 CREATE POLICY "Authenticated users can delete events"
     ON events FOR DELETE TO authenticated USING (true);
 
+-- Storage bucket RLS policies for attendee-photos bucket
+CREATE POLICY "Allow uploads to attendee-photos"
+    ON storage.objects FOR INSERT TO authenticated
+    WITH CHECK (bucket_id = 'attendee-photos');
+
+CREATE POLICY "Allow reads from attendee-photos"
+    ON storage.objects FOR SELECT TO authenticated
+    USING (bucket_id = 'attendee-photos');
+
+CREATE POLICY "Allow deletes from attendee-photos"
+    ON storage.objects FOR DELETE TO authenticated
+    USING (bucket_id = 'attendee-photos');
+
 -- Seed default event
 INSERT INTO events (event_name, event_date, venue, description)
 VALUES ('EventPro Conference', NOW() + INTERVAL '30 days', 'Main Hall', 'Annual tech conference');
