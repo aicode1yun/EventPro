@@ -35,8 +35,29 @@ jobs:
           (Get-Content Ticket.csproj) -replace '<ApplicationVersion>.*</ApplicationVersion>', "<ApplicationVersion>$versionCode</ApplicationVersion>" | Set-Content Ticket.csproj
           Write-Host "Set version to $version ($versionCode)"
 
+      - name: Set up Android keystore
+        shell: pwsh
+        run: |
+          $base64 = "${{ secrets.ANDROID_KEYSTORE_BASE64 }}"
+          if ([string]::IsNullOrEmpty($base64)) {
+            Write-Host "No ANDROID_KEYSTORE_BASE64 secret - APK will not be signed"
+            return
+          }
+          $bytes = [Convert]::FromBase64String($base64)
+          [IO.File]::WriteAllBytes("${{ github.workspace }}\EventPro.keystore", $bytes)
+          Write-Host "Keystore created from secret"
+
       - name: Publish Android APK
-        run: dotnet publish -f net10.0-android -c Release
+        shell: pwsh
+        run: |
+          $signProps = ""
+          if (Test-Path "${{ github.workspace }}\EventPro.keystore") {
+            $alias = "${{ secrets.ANDROID_KEY_ALIAS }}"
+            $keyPass = "${{ secrets.ANDROID_KEY_PASS }}"
+            $storePass = "${{ secrets.ANDROID_KEYSTORE_PASS }}"
+            $signProps = "/p:AndroidKeyStore=true /p:AndroidSigningKeyStore=${{ github.workspace }}\EventPro.keystore /p:AndroidSigningKeyAlias=$alias /p:AndroidSigningKeyPass=$keyPass /p:AndroidSigningStorePass=$storePass"
+          }
+          dotnet publish -f net10.0-android -c Release $signProps
 
       - name: Upload APK as artifact
         uses: actions/upload-artifact@v4

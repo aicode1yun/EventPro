@@ -27,6 +27,8 @@ obj/
 *.apk
 *.aab
 local.properties
+# keystore files
+Platforms/Android/*.keystore
 
 ## NuGet
 packages/
