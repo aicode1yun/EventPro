@@ -1,5 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Ticket.Models;
 using Ticket.Services;
 
 namespace Ticket.ViewModels
@@ -8,6 +9,8 @@ namespace Ticket.ViewModels
     {
         private readonly ITicketValidationService _validationService;
         private readonly IQrCodeService _qrService;
+        private readonly IAuthService _authService;
+        private readonly IRoleService _roleService;
 
         [ObservableProperty]
         private bool _isScanning;
@@ -15,10 +18,12 @@ namespace Ticket.ViewModels
         [ObservableProperty]
         private bool _isTorchOn;
 
-        public ScannerViewModel(ITicketValidationService validationService, IQrCodeService qrService)
+        public ScannerViewModel(ITicketValidationService validationService, IQrCodeService qrService, IAuthService authService, IRoleService roleService)
         {
             _validationService = validationService;
             _qrService = qrService;
+            _authService = authService;
+            _roleService = roleService;
             Title = "Scanner";
         }
 
@@ -30,6 +35,14 @@ namespace Ticket.ViewModels
 
             try
             {
+                // Check user role - only Operator and Admin can scan tickets
+                var userRole = await _authService.GetCurrentUserRoleAsync();
+                if (!userRole.HasValue || !_roleService.HasRole(userRole.Value, UserRole.Operator))
+                {
+                    await PopupHelper.ShowWarningToastAsync("You don't have permission to scan tickets.");
+                    await ResetScannerAsync();
+                    return;
+                }
                 var payload = _qrService.ParseQrPayload(barcodeValue);
                 if (payload is null)
                 {

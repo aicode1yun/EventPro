@@ -493,6 +493,17 @@ namespace Ticket.Services
             return await _localDb.GetCheckedInCountAsync();
         }
 
+        public async Task<(int total, int checkedIn)> GetDashboardStatsAsync()
+        {
+            // Fetch both counts in parallel to reduce network latency
+            var totalTask = GetTotalAttendeesAsync();
+            var checkedInTask = GetCheckedInCountAsync();
+            
+            await Task.WhenAll(totalTask, checkedInTask);
+            
+            return (await totalTask, await checkedInTask);
+        }
+
         // ====================================================================
         // LOCAL CACHE HELPERS
         // ====================================================================

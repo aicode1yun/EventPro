@@ -11,6 +11,10 @@ namespace Ticket.ViewModels
     {
         private readonly ISupabaseClient _supabase;
         private readonly IQrCodeService _qrService;
+        private readonly IPhotoUploadService _photoUploader;
+        private readonly IPhotoCompressionService _photoCompressor;
+        private readonly IAuthService _authService;
+        private readonly IRoleService _roleService;
 
         [ObservableProperty]
         private string _fullName = string.Empty;
@@ -38,10 +42,14 @@ namespace Ticket.ViewModels
         public List<string> TicketTypes { get; } = new() { "General", "VIP", "Premium", "Early Bird", "Student" };
         public List<string> PaymentStatuses { get; } = new() { "Pending", "Paid", "Free" };
 
-        public RegisterParticipantViewModel(ISupabaseClient supabase, IQrCodeService qrService)
+        public RegisterParticipantViewModel(ISupabaseClient supabase, IQrCodeService qrService, IPhotoUploadService photoUploader, IPhotoCompressionService photoCompressor, IAuthService authService, IRoleService roleService)
         {
             _supabase = supabase;
             _qrService = qrService;
+            _photoUploader = photoUploader;
+            _photoCompressor = photoCompressor;
+            _authService = authService;
+            _roleService = roleService;
             Title = "Register";
         }
 
@@ -137,6 +145,14 @@ namespace Ticket.ViewModels
         [RelayCommand]
         private async Task SaveAsync()
         {
+            // Check user role - only Operator and Admin can register attendees
+            var userRole = await _authService.GetCurrentUserRoleAsync();
+            if (!userRole.HasValue || !_roleService.HasRole(userRole.Value, UserRole.Operator))
+            {
+                await PopupHelper.ShowWarningToastAsync("You don't have permission to register attendees.");
+                return;
+            }
+
             if (string.IsNullOrWhiteSpace(FullName))
             {
                 await PopupHelper.ShowWarningToastAsync("Full name is required.");
@@ -171,15 +187,39 @@ namespace Ticket.ViewModels
                     RegisteredAt = DateTime.UtcNow
                 };
 
+                // save attendee first to obtain Id and persistent record
+                await _supabase.SaveAttendeeAsync(attendee);
+
                 if (!string.IsNullOrEmpty(_photoPath))
                 {
                     var fileName = $"{attendee.TicketCode}_{DateTime.UtcNow:yyyyMMddHHmmss}.jpg";
-                    using var stream = File.OpenRead(_photoPath);
-                    var photoUrl = await _supabase.UploadPhotoAsync(stream, fileName);
-                    attendee.PhotoUrl = photoUrl;
+                    
+                    // Compress photo before upload (saves bandwidth, reduces upload time)
+                    var compressedPath = await _photoCompressor.CompressPhotoAsync(_photoPath, fileName, maxWidth: 1024, maxHeight: 1024, quality: 80);
+                    if (compressedPath != null)
+                    {
+                        var originalSize = await _photoCompressor.GetFileSizeAsync(_photoPath);
+                        var compressedSize = await _photoCompressor.GetFileSizeAsync(compressedPath);
+                        System.Diagnostics.Debug.WriteLine($"Photo compressed: {originalSize / 1024}KB -> {compressedSize / 1024}KB");
+                        
+                        var remote = await _photoUploader.UploadNowOrEnqueueAsync(compressedPath, fileName, attendee.Id, attendee.TicketCode);
+                        if (!string.IsNullOrEmpty(remote))
+                        {
+                            attendee.PhotoUrl = remote;
+                            await _supabase.SaveAttendeeAsync(attendee);
+                        }
+                    }
+                    else
+                    {
+                        // Compression failed, try upload original
+                        var remote = await _photoUploader.UploadNowOrEnqueueAsync(_photoPath, fileName, attendee.Id, attendee.TicketCode);
+                        if (!string.IsNullOrEmpty(remote))
+                        {
+                            attendee.PhotoUrl = remote;
+                            await _supabase.SaveAttendeeAsync(attendee);
+                        }
+                    }
                 }
-
-                await _supabase.SaveAttendeeAsync(attendee);
 
                 await Shell.Current.GoToAsync($"ticketPreview?attendeeId={attendee.Id}");
 

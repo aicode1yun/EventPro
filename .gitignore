@@ -29,6 +29,7 @@ obj/
 local.properties
 # keystore files
 Platforms/Android/*.keystore
+keystore_base64.txt
 
 ## NuGet
 packages/

@@ -30,7 +30,7 @@ namespace Ticket.Services
             var location = evt?.Description ?? string.Empty;
 
             const float s = 1.8f;
-            int w = (int)(800 * s), h = (int)(1200 * s);
+            int w = (int)(800 * s), h = (int)(1400 * s);
             var info = new SKImageInfo(w, h);
             using var surface = SKSurface.Create(info);
             var canvas = surface.Canvas;
@@ -50,6 +50,9 @@ namespace Ticket.Services
             var w08 = new SKColor(0xFF, 0xFF, 0xFF, 0x14);
             var w04 = new SKColor(0xFF, 0xFF, 0xFF, 0x0A);
             var cardBg = new SKColor(0xFF, 0xFF, 0xFF, 0x06);
+
+            // Pre-fetch photo bytes so we can use them for both the large photo above title and the avatar
+            var largePhotoBytes = await GetPhotoBytesAsync(attendee);
 
             canvas.DrawRect(0, 0, w, h, new SKPaint { Color = navy });
 
@@ -102,7 +105,56 @@ namespace Ticket.Services
             DrawCornerOrnament(canvas, bp + 10 * s, h - bp - 30 * s, 20 * s, purple);
             DrawCornerOrnament(canvas, mr - 10 * s, h - bp - 30 * s, 20 * s, purple);
 
-            float y = 174 * s;
+            float y = 140 * s;
+
+            // ============================================================
+            // LARGE PHOTO (above title)
+            // ============================================================
+            if (largePhotoBytes is not null)
+            {
+                using var largeBitmap = SKBitmap.Decode(largePhotoBytes);
+                if (largeBitmap is not null)
+                {
+                    float photoSize = 160 * s;
+                    float photoY = y;
+
+                    var photoGlow = new SKPaint
+                    {
+                        Color = new SKColor(0x7C, 0x3A, 0xED, 0x18),
+                        IsAntialias = true,
+                        MaskFilter = SKMaskFilter.CreateBlur(SKBlurStyle.Normal, 20 * s)
+                    };
+                    canvas.DrawRoundRect(cx - photoSize / 2f - 8 * s, photoY - 8 * s, photoSize + 16 * s, photoSize + 16 * s, 20 * s, 20 * s, photoGlow);
+
+                    canvas.DrawRoundRect(cx - photoSize / 2f - 3 * s, photoY - 3 * s, photoSize + 6 * s, photoSize + 6 * s, 18 * s, 18 * s,
+                        new SKPaint { Color = white, IsAntialias = true });
+
+                    using var croppedPhoto = new SKBitmap((int)photoSize, (int)photoSize);
+                    using var cropCanvas = new SKCanvas(croppedPhoto);
+                    cropCanvas.Clear(SKColors.Transparent);
+
+                    var clipPath = new SKPath();
+                    clipPath.AddRoundRect(new SKRect(0, 0, photoSize, photoSize), 14 * s, 14 * s);
+                    cropCanvas.ClipPath(clipPath, SKClipOperation.Intersect, true);
+
+                    float srcSize = Math.Min(largeBitmap.Width, largeBitmap.Height);
+                    float srcX = (largeBitmap.Width - srcSize) / 2f;
+                    float srcY = (largeBitmap.Height - srcSize) / 2f;
+                    cropCanvas.DrawBitmap(largeBitmap, new SKRect(
+                        -srcX * photoSize / srcSize,
+                        -srcY * photoSize / srcSize,
+                        (largeBitmap.Width - srcX) * photoSize / srcSize,
+                        (largeBitmap.Height - srcY) * photoSize / srcSize));
+
+                    canvas.DrawBitmap(croppedPhoto, cx - photoSize / 2f, photoY);
+
+                    y += photoSize + 80 * s;
+                }
+            }
+            else
+            {
+                y = 174 * s;
+            }
 
             // ============================================================
             // EVENT TITLE
@@ -189,10 +241,9 @@ namespace Ticket.Services
             };
             canvas.DrawCircle(avCenterX, avCenterY, avSize / 2f + 4 * s, avatarGlow);
 
-            var photoBytes = await GetPhotoBytesAsync(attendee);
-            if (photoBytes is not null)
+            if (largePhotoBytes is not null)
             {
-                using var photoBitmap = SKBitmap.Decode(photoBytes);
+                using var photoBitmap = SKBitmap.Decode(largePhotoBytes);
                 if (photoBitmap is not null)
                 {
                     using var circularPhoto = new SKBitmap((int)avSize, (int)avSize);

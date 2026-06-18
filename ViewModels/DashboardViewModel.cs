@@ -1,5 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Ticket.Models;
 using Ticket.Services;
 
 namespace Ticket.ViewModels
@@ -7,6 +8,8 @@ namespace Ticket.ViewModels
     public partial class DashboardViewModel : BaseViewModel
     {
         private readonly ISupabaseClient _supabase;
+        private readonly IAuthService _authService;
+        private readonly IRoleService _roleService;
 
         [ObservableProperty]
         private int _totalParticipants;
@@ -17,9 +20,14 @@ namespace Ticket.ViewModels
         [ObservableProperty]
         private int _remainingCount;
 
-        public DashboardViewModel(ISupabaseClient supabase)
+        [ObservableProperty]
+        private bool _isAdmin;
+
+        public DashboardViewModel(ISupabaseClient supabase, IAuthService authService, IRoleService roleService)
         {
             _supabase = supabase;
+            _authService = authService;
+            _roleService = roleService;
             Title = "Dashboard";
         }
 
@@ -29,8 +37,14 @@ namespace Ticket.ViewModels
             IsBusy = true;
             try
             {
-                TotalParticipants = await _supabase.GetTotalAttendeesAsync();
-                CheckedInCount = await _supabase.GetCheckedInCountAsync();
+                // Check user role and set visibility flag
+                var userRole = await _authService.GetCurrentUserRoleAsync();
+                IsAdmin = userRole.HasValue && _roleService.IsAdmin(userRole.Value);
+
+                // Batch API call for dashboard stats (reduces latency vs separate calls)
+                var (total, checkedIn) = await _supabase.GetDashboardStatsAsync();
+                TotalParticipants = total;
+                CheckedInCount = checkedIn;
                 RemainingCount = TotalParticipants - CheckedInCount;
             }
             finally

@@ -9,6 +9,9 @@ namespace Ticket.ViewModels
     public partial class ParticipantsViewModel : BaseViewModel
     {
         private readonly ISupabaseClient _supabase;
+        private readonly IAuthService _authService;
+        private readonly IRoleService _roleService;
+        private Timer? _searchDebounceTimer;
 
         [ObservableProperty]
         private string _searchText = string.Empty;
@@ -21,9 +24,11 @@ namespace Ticket.ViewModels
 
         private List<Attendee> _allAttendees = new();
 
-        public ParticipantsViewModel(ISupabaseClient supabase)
+        public ParticipantsViewModel(ISupabaseClient supabase, IAuthService authService, IRoleService roleService)
         {
             _supabase = supabase;
+            _authService = authService;
+            _roleService = roleService;
             Title = "Participants";
             FilterChips.Add(new FilterChip("All", true));
             FilterChips.Add(new FilterChip("Checked In"));
@@ -33,6 +38,14 @@ namespace Ticket.ViewModels
         [RelayCommand]
         private async Task LoadAttendees()
         {
+            // Check user role - only Operator and Admin can view participants
+            var userRole = await _authService.GetCurrentUserRoleAsync();
+            if (!userRole.HasValue || !_roleService.HasRole(userRole.Value, UserRole.Operator))
+            {
+                await PopupHelper.ShowWarningToastAsync("You don't have permission to view participants.");
+                return;
+            }
+
             IsBusy = true;
             try
             {
@@ -60,7 +73,9 @@ namespace Ticket.ViewModels
 
         partial void OnSearchTextChanged(string value)
         {
-            ApplyFilters();
+            // Debounce search to avoid filtering on every keystroke
+            _searchDebounceTimer?.Dispose();
+            _searchDebounceTimer = new Timer(_ => ApplyFilters(), null, 300, Timeout.Infinite);
         }
 
         private void ApplyFilters()

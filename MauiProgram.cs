@@ -36,10 +36,14 @@ namespace Ticket
             // Services
             builder.Services.AddSingleton<ISupabaseClient, SupabaseClient>();
             builder.Services.AddSingleton<IAuthService, AuthService>();
+            builder.Services.AddSingleton<IRoleService, RoleService>();
             builder.Services.AddSingleton<IQrCodeService, QrCodeService>();
             builder.Services.AddSingleton<ITicketValidationService, TicketValidationService>();
             builder.Services.AddSingleton<ITicketImageService, TicketImageService>();
             builder.Services.AddSingleton<IMediaService, MediaService>();
+            builder.Services.AddSingleton<IPhotoUploadService, PhotoUploadService>();
+            builder.Services.AddSingleton<IPhotoCompressionService, PhotoCompressionService>();
+            builder.Services.AddSingleton<ITelemetryService, TelemetryService>();
 
             // ViewModels (transient to avoid stale state)
             builder.Services.AddTransient<LoginViewModel>();

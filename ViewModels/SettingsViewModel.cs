@@ -9,6 +9,7 @@ namespace Ticket.ViewModels
     {
         private readonly ISupabaseClient _supabase;
         private readonly IAuthService _authService;
+        private readonly IRoleService _roleService;
 
         [ObservableProperty]
         private string _eventName = string.Empty;
@@ -25,16 +26,24 @@ namespace Ticket.ViewModels
         [ObservableProperty]
         private string _appVersion = "1.0.0";
 
-        public SettingsViewModel(ISupabaseClient supabase, IAuthService authService)
+        [ObservableProperty]
+        private bool _isAdmin;
+
+        public SettingsViewModel(ISupabaseClient supabase, IAuthService authService, IRoleService roleService)
         {
             _supabase = supabase;
             _authService = authService;
+            _roleService = roleService;
             Title = "Settings";
         }
 
         [RelayCommand]
         private async Task LoadSettingsAsync()
         {
+            // Check user role and set visibility flag
+            var userRole = await _authService.GetCurrentUserRoleAsync();
+            IsAdmin = userRole.HasValue && _roleService.IsAdmin(userRole.Value);
+
             IsBusy = true;
             try
             {
@@ -56,6 +65,14 @@ namespace Ticket.ViewModels
         [RelayCommand]
         private async Task SaveEventAsync()
         {
+            // Check user role - only Admin can save event settings
+            var userRole = await _authService.GetCurrentUserRoleAsync();
+            if (!userRole.HasValue || !_roleService.IsAdmin(userRole.Value))
+            {
+                await PopupHelper.ShowWarningToastAsync("Only administrators can modify event settings.");
+                return;
+            }
+
             if (string.IsNullOrWhiteSpace(EventName))
             {
                 await PopupHelper.ShowWarningToastAsync("Event name is required.");

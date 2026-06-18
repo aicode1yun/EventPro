@@ -29,5 +29,6 @@ namespace Ticket.Services
         // Stats
         Task<int> GetTotalAttendeesAsync();
         Task<int> GetCheckedInCountAsync();
+        Task<(int total, int checkedIn)> GetDashboardStatsAsync();
     }
 }
