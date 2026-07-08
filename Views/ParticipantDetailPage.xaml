@@ -2,134 +2,190 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:Ticket.ViewModels"
+             xmlns:conv="clr-namespace:Ticket.Converters"
              x:Class="Ticket.Views.ParticipantDetailPage"
              x:DataType="vm:ParticipantDetailViewModel"
              Title="Participant"
-             BackgroundColor="{StaticResource PageBackground}">
+             BackgroundColor="{AppThemeBinding Light={StaticResource PageBackground}, Dark={StaticResource DarkPageBackground}}">
 
-    <ScrollView>
-        <VerticalStackLayout Spacing="16" Padding="20">
-            <Border StrokeShape="RoundRectangle 12"
-                    Stroke="{StaticResource Gray200}"
-                    BackgroundColor="{StaticResource CardBackground}"
-                    Padding="24"
-                    Shadow="{StaticResource CardShadow}">
-                <VerticalStackLayout Spacing="12">
-                    <Border WidthRequest="100" HeightRequest="100"
-                            StrokeShape="RoundRectangle 50"
-                            Stroke="{StaticResource Gray200}"
-                            BackgroundColor="{StaticResource Gray100}"
-                            HorizontalOptions="Center"
-                            IsVisible="{Binding AttendeePhoto, Converter={StaticResource IsNotNullConverter}}">
-                        <Image Source="{Binding AttendeePhoto}"
-                               Aspect="AspectFill"
-                               WidthRequest="100"
-                               HeightRequest="100" />
-                    </Border>
+    <RefreshView IsRefreshing="{Binding IsBusy}">
+        <ScrollView>
+            <VerticalStackLayout Spacing="0">
 
-                    <Label Text="{Binding Attendee.FullName}"
-                           FontSize="24"
-                           FontAttributes="Bold"
-                           TextColor="{StaticResource TextPrimary}"
-                           HorizontalOptions="Center" />
+                <!-- Profile Header -->
+                <Grid BackgroundColor="{AppThemeBinding Light={StaticResource Primary}, Dark=#1A1B3E}"
+                      Padding="20,24,20,36">
+                    <VerticalStackLayout Spacing="14" HorizontalOptions="Center">
+                        <!-- Avatar -->
+                        <Border StrokeShape="RoundRectangle 9999"
+                                WidthRequest="96" HeightRequest="96"
+                                StrokeThickness="3"
+                                Stroke="White"
+                                BackgroundColor="{AppThemeBinding Light={StaticResource PrimaryContainer}, Dark={StaticResource DarkSurfaceTertiary}}"
+                                HorizontalOptions="Center">
+                            <Grid>
+                                <Image Source="{Binding AttendeePhoto}"
+                                       Aspect="AspectFill"
+                                       WidthRequest="96" HeightRequest="96"
+                                       IsVisible="{Binding AttendeePhoto, Converter={StaticResource IsNotNullConverter}}" />
+                                <Label Text="&#xf007;"
+                                       FontFamily="FAS"
+                                       FontSize="36"
+                                       TextColor="White"
+                                       HorizontalOptions="Center"
+                                       VerticalOptions="Center"
+                                       IsVisible="{Binding AttendeePhoto, Converter={StaticResource IsNullConverter}}" />
+                            </Grid>
+                        </Border>
+                        <Label Text="{Binding Attendee.FullName}"
+                               FontSize="22"
+                               FontAttributes="Bold"
+                               TextColor="White"
+                               HorizontalOptions="Center" />
+                        <HorizontalStackLayout Spacing="8" HorizontalOptions="Center">
+                            <Label Text="{Binding Attendee.TicketCode}"
+                                   FontSize="13"
+                                   TextColor="#D0D5FF"
+                                   FontFamily="FAS" />
+                        </HorizontalStackLayout>
+                    </VerticalStackLayout>
+                </Grid>
 
-                    <Label Text="{Binding Attendee.TicketCode}"
-                           FontSize="14"
-                           TextColor="{StaticResource Gray500}"
-                           HorizontalOptions="Center" />
+                <!-- Info Card -->
+                <Border Style="{StaticResource CardFloating}"
+                        Margin="20,-24,20,0"
+                        Padding="20">
+                    <VerticalStackLayout Spacing="16">
+                        <!-- Edit Toggle -->
+                        <HorizontalStackLayout Spacing="8" HorizontalOptions="End">
+                            <Button Text="Edit"
+                                    Style="{StaticResource ButtonGhost}"
+                                    Command="{Binding ToggleEditCommand}"
+                                    FontSize="13"
+                                    Padding="12,6"
+                                    HeightRequest="36"
+                                    IsVisible="{Binding IsEditing, Converter={StaticResource InverseBoolConverter}}" />
+                            <Button Text="Cancel"
+                                    Style="{StaticResource ButtonGhost}"
+                                    Command="{Binding ToggleEditCommand}"
+                                    FontSize="13"
+                                    Padding="12,6"
+                                    HeightRequest="36"
+                                    IsVisible="{Binding IsEditing}" />
+                        </HorizontalStackLayout>
 
-                    <BoxView HeightRequest="1" Color="{StaticResource Gray200}" />
+                        <!-- View Mode -->
+                        <VerticalStackLayout Spacing="14"
+                                             IsVisible="{Binding IsEditing, Converter={StaticResource InverseBoolConverter}}">
+                            <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto" RowSpacing="14" ColumnSpacing="16">
+                                <Label Text="Phone" Style="{StaticResource Caption}" />
+                                <Label Grid.Column="1" Text="{Binding Attendee.PhoneNumber}" Style="{StaticResource Body}" />
 
-                    <Image Source="{Binding QrCodeImage}"
-                           WidthRequest="180"
-                           HeightRequest="180"
-                           HorizontalOptions="Center" />
+                                <Label Grid.Row="1" Text="Ticket Type" Style="{StaticResource Caption}" />
+                                <Label Grid.Row="1" Grid.Column="1" Text="{Binding Attendee.TicketType}" Style="{StaticResource Body}" />
 
-                    <BoxView HeightRequest="1" Color="{StaticResource Gray200}" />
+                                <Label Grid.Row="2" Text="Status" Style="{StaticResource Caption}" />
+                                <Label Grid.Row="2" Grid.Column="1">
+                                    <Label.FormattedText>
+                                        <FormattedString>
+                                            <Span Text="{Binding Attendee.IsCheckedIn, Converter={StaticResource CheckInStatusConverter}}" />
+                                        </FormattedString>
+                                    </Label.FormattedText>
+                                </Label>
 
-                    <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto,Auto,Auto" RowSpacing="10" ColumnSpacing="8">
-                        <Label Text="Phone" FontSize="12" TextColor="{StaticResource Gray500}"
-                               Grid.Row="0" Grid.Column="0" />
-                        <Label Text="{Binding Attendee.PhoneNumber}" FontSize="16"
-                               TextColor="{StaticResource TextPrimary}"
-                               Grid.Row="0" Grid.Column="1" />
+                                <Label Grid.Row="3" Text="Notes" Style="{StaticResource Caption}" />
+                                <Label Grid.Row="3" Grid.Column="1" Text="{Binding Attendee.Notes}" Style="{StaticResource BodySmall}" />
+                            </Grid>
+                        </VerticalStackLayout>
 
-                        <Label Text="Type" FontSize="12" TextColor="{StaticResource Gray500}"
-                               Grid.Row="1" Grid.Column="0" />
-                        <Label Text="{Binding Attendee.TicketType}" FontSize="16"
-                               TextColor="{StaticResource TextPrimary}"
-                               Grid.Row="1" Grid.Column="1" />
+                        <!-- Edit Mode -->
+                        <VerticalStackLayout Spacing="14"
+                                             IsVisible="{Binding IsEditing}">
+                            <VerticalStackLayout Spacing="6">
+                                <Label Text="Full Name" Style="{StaticResource FormLabel}" />
+                                <Border Style="{StaticResource FormField}">
+                                    <Entry Text="{Binding EditFullName}" />
+                                </Border>
+                            </VerticalStackLayout>
+                            <VerticalStackLayout Spacing="6">
+                                <Label Text="Phone" Style="{StaticResource FormLabel}" />
+                                <Border Style="{StaticResource FormField}">
+                                    <Entry Text="{Binding EditPhoneNumber}" Keyboard="Telephone" />
+                                </Border>
+                            </VerticalStackLayout>
+                            <VerticalStackLayout Spacing="6">
+                                <Label Text="Ticket Type" Style="{StaticResource FormLabel}" />
+                                <Border Style="{StaticResource FormField}" Padding="16,0">
+                                    <Picker SelectedItem="{Binding EditTicketType}">
+                                        <Picker.ItemsSource>
+                                            <x:Array Type="{x:Type x:String}">
+                                                <x:String>General</x:String>
+                                                <x:String>VIP</x:String>
+                                                <x:String>Premium</x:String>
+                                                <x:String>Early Bird</x:String>
+                                                <x:String>Student</x:String>
+                                            </x:Array>
+                                        </Picker.ItemsSource>
+                                    </Picker>
+                                </Border>
+                            </VerticalStackLayout>
+                            <VerticalStackLayout Spacing="6">
+                                <Label Text="Notes" Style="{StaticResource FormLabel}" />
+                                <Border Style="{StaticResource FormField}" HeightRequest="90" Padding="16,8">
+                                    <Editor Text="{Binding EditNotes}" HeightRequest="74" />
+                                </Border>
+                            </VerticalStackLayout>
+                            <Button Text="Save Changes"
+                                    Command="{Binding SaveEditCommand}"
+                                    HeightRequest="48" />
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+                </Border>
 
-                        <Label Text="Status" FontSize="12" TextColor="{StaticResource Gray500}"
-                               Grid.Row="2" Grid.Column="0" />
-                        <Label Text="{Binding Attendee.PaymentStatus}" FontSize="16"
-                               TextColor="{StaticResource Success}"
-                               Grid.Row="2" Grid.Column="1" />
+                <!-- QR Code Section -->
+                <Border Style="{StaticResource Card}"
+                        Margin="20,16,20,0"
+                        Padding="20">
+                    <VerticalStackLayout Spacing="14" HorizontalOptions="Center">
+                        <Label Text="Ticket QR Code"
+                               Style="{StaticResource Subheadline}"
+                               HorizontalOptions="Center" />
+                        <Image Source="{Binding QrCodeImage}"
+                               WidthRequest="180" HeightRequest="180"
+                               HorizontalOptions="Center" />
+                        <Label Text="Present this QR at the entrance"
+                               Style="{StaticResource Caption}"
+                               HorizontalOptions="Center" />
+                    </VerticalStackLayout>
+                </Border>
 
-                        <Label Text="Check-in" FontSize="12" TextColor="{StaticResource Gray500}"
-                               Grid.Row="3" Grid.Column="0" />
-                        <Label Text="{Binding Attendee.CheckedInAt, StringFormat='{0:MMM dd, HH:mm}'}"
-                               FontSize="16"
-                               TextColor="{StaticResource TextPrimary}"
-                               Grid.Row="3" Grid.Column="1" />
-                    </Grid>
-                </VerticalStackLayout>
-            </Border>
+                <!-- Action Buttons -->
+                <Border Style="{StaticResource Card}"
+                        Margin="20,16,20,0"
+                        Padding="16">
+                    <VerticalStackLayout Spacing="10">
+                        <Button Text="Share Ticket"
+                                Style="{StaticResource ButtonSecondary}"
+                                Command="{Binding ShareTicketCommand}"
+                                HeightRequest="48" />
+                        <Button Text="Save to Gallery"
+                                Style="{StaticResource ButtonSecondary}"
+                                Command="{Binding SaveToGalleryCommand}"
+                                HeightRequest="48" />
+                        <Button Text="Regenerate QR Code"
+                                Style="{StaticResource ButtonOutline}"
+                                Command="{Binding RegenerateTicketCommand}"
+                                HeightRequest="48" />
+                        <Button Text="Delete Participant"
+                                Style="{StaticResource ButtonDanger}"
+                                Command="{Binding DeleteAttendeeCommand}"
+                                HeightRequest="48"
+                                Margin="0,4,0,0" />
+                    </VerticalStackLayout>
+                </Border>
 
-            <Border StrokeShape="RoundRectangle 12"
-                    BackgroundColor="#10B981"
-                    HeightRequest="50"
-                    Padding="16">
-                <Border.GestureRecognizers>
-                    <TapGestureRecognizer Command="{Binding SaveToGalleryCommand}" />
-                </Border.GestureRecognizers>
-                <HorizontalStackLayout Spacing="8" VerticalOptions="Center" HorizontalOptions="Center">
-                    <Label Text="&#xf0c7;" FontFamily="FAS" TextColor="White" FontSize="18" VerticalOptions="Center" />
-                    <Label Text="Save to Gallery" TextColor="White" FontSize="14" FontAttributes="Bold" VerticalOptions="Center" />
-                </HorizontalStackLayout>
-            </Border>
-
-            <Border StrokeShape="RoundRectangle 12"
-                    BackgroundColor="{StaticResource Accent}"
-                    HeightRequest="50"
-                    Padding="16">
-                <Border.GestureRecognizers>
-                    <TapGestureRecognizer Command="{Binding ShareTicketCommand}" />
-                </Border.GestureRecognizers>
-                <HorizontalStackLayout Spacing="8" VerticalOptions="Center" HorizontalOptions="Center">
-                    <Label Text="&#xf1e0;" FontFamily="FAS" TextColor="White" FontSize="18" VerticalOptions="Center" />
-                    <Label Text="Share Ticket" TextColor="White" FontSize="14" FontAttributes="Bold" VerticalOptions="Center" />
-                </HorizontalStackLayout>
-            </Border>
-
-            <Border StrokeShape="RoundRectangle 12"
-                    BackgroundColor="{StaticResource Warning}"
-                    HeightRequest="50"
-                    Padding="16">
-                <Border.GestureRecognizers>
-                    <TapGestureRecognizer Command="{Binding RegenerateTicketCommand}" />
-                </Border.GestureRecognizers>
-                <HorizontalStackLayout Spacing="8" VerticalOptions="Center" HorizontalOptions="Center">
-                    <Label Text="&#xf021;" FontFamily="FAS" TextColor="White" FontSize="18" VerticalOptions="Center" />
-                    <Label Text="Regenerate Ticket" TextColor="White" FontSize="14" FontAttributes="Bold" VerticalOptions="Center" />
-                </HorizontalStackLayout>
-            </Border>
-
-            <Border StrokeShape="RoundRectangle 12"
-                    BackgroundColor="#EF4444"
-                    HeightRequest="50"
-                    Padding="16">
-                <Border.GestureRecognizers>
-                    <TapGestureRecognizer Command="{Binding DeleteAttendeeCommand}" />
-                </Border.GestureRecognizers>
-                <HorizontalStackLayout Spacing="8" VerticalOptions="Center" HorizontalOptions="Center">
-                    <Label Text="&#xf2ed;" FontFamily="FAS" TextColor="White" FontSize="18" VerticalOptions="Center" />
-                    <Label Text="Delete Participant" TextColor="White" FontSize="14" FontAttributes="Bold" VerticalOptions="Center" />
-                </HorizontalStackLayout>
-            </Border>
-
-            <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" Color="{StaticResource Primary}" />
-        </VerticalStackLayout>
-    </ScrollView>
+            </VerticalStackLayout>
+        </ScrollView>
+    </RefreshView>
 
 </ContentPage>

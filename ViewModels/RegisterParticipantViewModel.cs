@@ -145,7 +145,6 @@ namespace Ticket.ViewModels
         [RelayCommand]
         private async Task SaveAsync()
         {
-            // Check user role - only Operator and Admin can register attendees
             var userRole = await _authService.GetCurrentUserRoleAsync();
             if (!userRole.HasValue || !_roleService.HasRole(userRole.Value, UserRole.Operator))
             {
@@ -187,21 +186,19 @@ namespace Ticket.ViewModels
                     RegisteredAt = DateTime.UtcNow
                 };
 
-                // save attendee first to obtain Id and persistent record
                 await _supabase.SaveAttendeeAsync(attendee);
 
                 if (!string.IsNullOrEmpty(_photoPath))
                 {
                     var fileName = $"{attendee.TicketCode}_{DateTime.UtcNow:yyyyMMddHHmmss}.jpg";
-                    
-                    // Compress photo before upload (saves bandwidth, reduces upload time)
+
                     var compressedPath = await _photoCompressor.CompressPhotoAsync(_photoPath, fileName, maxWidth: 1024, maxHeight: 1024, quality: 80);
                     if (compressedPath != null)
                     {
                         var originalSize = await _photoCompressor.GetFileSizeAsync(_photoPath);
                         var compressedSize = await _photoCompressor.GetFileSizeAsync(compressedPath);
                         System.Diagnostics.Debug.WriteLine($"Photo compressed: {originalSize / 1024}KB -> {compressedSize / 1024}KB");
-                        
+
                         var remote = await _photoUploader.UploadNowOrEnqueueAsync(compressedPath, fileName, attendee.Id, attendee.TicketCode);
                         if (!string.IsNullOrEmpty(remote))
                         {
@@ -211,7 +208,6 @@ namespace Ticket.ViewModels
                     }
                     else
                     {
-                        // Compression failed, try upload original
                         var remote = await _photoUploader.UploadNowOrEnqueueAsync(_photoPath, fileName, attendee.Id, attendee.TicketCode);
                         if (!string.IsNullOrEmpty(remote))
                         {

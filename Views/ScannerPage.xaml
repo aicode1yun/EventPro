@@ -5,58 +5,99 @@
              xmlns:zxing="clr-namespace:ZXing.Net.Maui.Controls;assembly=ZXing.Net.Maui.Controls"
              x:Class="Ticket.Views.ScannerPage"
              x:DataType="vm:ScannerViewModel"
-             Title="Scan">
+             Shell.NavBarIsVisible="False"
+             BackgroundColor="{AppThemeBinding Light={StaticResource PageBackground}, Dark={StaticResource DarkPageBackground}}">
 
-    <Grid>
-        <zxing:CameraBarcodeReaderView x:Name="BarcodeReader"
-                                        IsDetecting="{Binding IsScanning}"
-                                        BarcodesDetected="OnBarcodesDetected"
-                                        VerticalOptions="Fill"
-                                        HorizontalOptions="Fill" />
+    <ScrollView>
+        <VerticalStackLayout Spacing="0" Padding="24,20,24,32">
 
-        <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*" />
-                <RowDefinition Height="260" />
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="260" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
+            <!-- Header -->
+            <Label Text="Scan Ticket"
+                   Style="{StaticResource DisplayMedium}"
+                   Margin="0,0,0,4" />
+            <Label Text="Point the camera at the attendee&#x2019;s QR code"
+                   Style="{StaticResource BodySmall}"
+                   Margin="0,0,0,24" />
 
-            <BoxView Grid.Row="0" Grid.ColumnSpan="3" Color="#80000000" />
-            <BoxView Grid.Row="2" Grid.ColumnSpan="3" Color="#80000000" />
-            <BoxView Grid.Column="0" Grid.RowSpan="3" Color="#80000000" />
-            <BoxView Grid.Column="2" Grid.RowSpan="3" Color="#80000000" />
+            <!-- Camera area -->
+            <Grid HeightRequest="420">
+                <zxing:CameraBarcodeReaderView x:Name="BarcodeReader"
+                                                IsDetecting="{Binding IsScanning}"
+                                                BarcodesDetected="OnBarcodesDetected"
+                                                VerticalOptions="Fill"
+                                                HorizontalOptions="Fill" />
 
-            <Border Grid.Row="1" Grid.Column="1"
-                    BackgroundColor="Transparent"
-                    StrokeShape="RoundRectangle 16"
-                    Stroke="White" StrokeThickness="2"
-                    StrokeDashArray="8,4" />
+                <!-- Corner brackets -->
+                <Grid HorizontalOptions="Center"
+                      VerticalOptions="Center"
+                      WidthRequest="230"
+                      HeightRequest="230">
 
-            <Label Grid.Row="0" Grid.Column="1"
-                   Text="Point camera at QR code"
-                   FontSize="16" TextColor="White"
-                   VerticalOptions="End" HorizontalOptions="Center"
-                   Margin="0,0,0,20" />
+                    <BoxView BackgroundColor="{AppThemeBinding Light={StaticResource Secondary}, Dark={StaticResource Secondary}}"
+                             WidthRequest="24" HeightRequest="3"
+                             HorizontalOptions="Start" VerticalOptions="Start" />
+                    <BoxView BackgroundColor="{AppThemeBinding Light={StaticResource Secondary}, Dark={StaticResource Secondary}}"
+                             WidthRequest="3" HeightRequest="24"
+                             HorizontalOptions="Start" VerticalOptions="Start" />
+                    <BoxView BackgroundColor="{AppThemeBinding Light={StaticResource Secondary}, Dark={StaticResource Secondary}}"
+                             WidthRequest="24" HeightRequest="3"
+                             HorizontalOptions="End" VerticalOptions="Start" />
+                    <BoxView BackgroundColor="{AppThemeBinding Light={StaticResource Secondary}, Dark={StaticResource Secondary}}"
+                             WidthRequest="3" HeightRequest="24"
+                             HorizontalOptions="End" VerticalOptions="Start" />
+                    <BoxView BackgroundColor="{AppThemeBinding Light={StaticResource Secondary}, Dark={StaticResource Secondary}}"
+                             WidthRequest="24" HeightRequest="3"
+                             HorizontalOptions="Start" VerticalOptions="End" />
+                    <BoxView BackgroundColor="{AppThemeBinding Light={StaticResource Secondary}, Dark={StaticResource Secondary}}"
+                             WidthRequest="3" HeightRequest="24"
+                             HorizontalOptions="Start" VerticalOptions="End" />
+                    <BoxView BackgroundColor="{AppThemeBinding Light={StaticResource Secondary}, Dark={StaticResource Secondary}}"
+                             WidthRequest="24" HeightRequest="3"
+                             HorizontalOptions="End" VerticalOptions="End" />
+                    <BoxView BackgroundColor="{AppThemeBinding Light={StaticResource Secondary}, Dark={StaticResource Secondary}}"
+                             WidthRequest="3" HeightRequest="24"
+                             HorizontalOptions="End" VerticalOptions="End" />
 
-            <Button Grid.Row="2" Grid.Column="1" x:Name="TorchButton"
-                    Clicked="OnTorchClicked"
-                    FontFamily="FAS"
-                    Text="&#xf0e7;"
-                    FontSize="22"
-                    TextColor="#000000"
-                    Opacity="{Binding IsTorchOn, Converter={StaticResource BoolToTorchOpactiy}}"
-                    CornerRadius="22"
-                    HeightRequest="44" WidthRequest="44"
-                    VerticalOptions="Start" HorizontalOptions="Center"
-                    Margin="0,16,0,0" />
-        </Grid>
+                    <Grid x:Name="ScanLineContainer"
+                          HorizontalOptions="Fill"
+                          VerticalOptions="Start"
+                          HeightRequest="2"
+                          Margin="10,0">
+                        <BoxView x:Name="ScanLine"
+                                 BackgroundColor="{AppThemeBinding Light={StaticResource Secondary}, Dark={StaticResource Secondary}}"
+                                 HeightRequest="2"
+                                 HorizontalOptions="Fill"
+                                 Opacity="0.9" />
+                    </Grid>
+                </Grid>
+            </Grid>
 
+            <!-- Action buttons -->
+            <VerticalStackLayout Spacing="16" Margin="0,24,0,0">
+                <Border x:Name="TorchButton"
+                        BackgroundColor="{AppThemeBinding Light={StaticResource PrimaryLight}, Dark={StaticResource DarkSurfaceTertiary}}"
+                        StrokeShape="RoundRectangle 9999"
+                        StrokeThickness="0"
+                        WidthRequest="56" HeightRequest="56"
+                        HorizontalOptions="Center"
+                        Opacity="{Binding IsTorchOn, Converter={StaticResource BoolToTorchOpactiy}}">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnTorchClicked" />
+                    </Border.GestureRecognizers>
+                    <Label Text="&#xf0eb;"
+                           FontFamily="FAS"
+                           FontSize="22"
+                           TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource Secondary}}"
+                           HorizontalOptions="Center"
+                           VerticalOptions="Center" />
+                </Border>
+                <Label Text="Tap to turn flash on or off"
+                       FontSize="12"
+                       TextColor="{AppThemeBinding Light={StaticResource TextTertiary}, Dark={StaticResource DarkTextTertiary}}"
+                       HorizontalOptions="Center" />
+            </VerticalStackLayout>
 
-    </Grid>
+        </VerticalStackLayout>
+    </ScrollView>
 
 </ContentPage>

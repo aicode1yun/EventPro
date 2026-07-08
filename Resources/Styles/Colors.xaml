@@ -3,59 +3,79 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
-    <!-- Primary Brand -->
+    <!-- ===== Brand Primary (Indigo) ===== -->
     <Color x:Key="Primary">#6366F1</Color>
     <Color x:Key="PrimaryDark">#4F46E5</Color>
-    <Color x:Key="PrimaryLight">#EEF2FF</Color>
-    <Color x:Key="PrimaryDarkText">#242424</Color>
-    <Color x:Key="Secondary">#E0E7FF</Color>
-    <Color x:Key="SecondaryDarkText">#9880e5</Color>
-    <Color x:Key="Accent">#3B82F6</Color>
+    <Color x:Key="PrimaryLight">#E0E7FF</Color>
+    <Color x:Key="PrimaryContainer">#EEF2FF</Color>
+    <Color x:Key="OnPrimary">#FFFFFF</Color>
+
+    <!-- ===== Accent / Secondary ===== -->
+    <Color x:Key="Secondary">#818CF8</Color>
+    <Color x:Key="SecondaryContainer">#E8ECFF</Color>
     <Color x:Key="Tertiary">#2B0B98</Color>
 
-    <!-- Semantic Colors -->
+    <!-- ===== Semantic ===== -->
     <Color x:Key="Success">#10B981</Color>
+    <Color x:Key="SuccessLight">#D1FAE5</Color>
     <Color x:Key="Warning">#F59E0B</Color>
+    <Color x:Key="WarningLight">#FEF3C7</Color>
     <Color x:Key="Danger">#EF4444</Color>
+    <Color x:Key="DangerLight">#FEE2E2</Color>
+    <Color x:Key="Info">#3B82F6</Color>
+    <Color x:Key="InfoLight">#DBEAFE</Color>
 
-    <!-- Base -->
+    <!-- ===== Light Mode Surface ===== -->
+    <Color x:Key="PageBackground">#F6F7F9</Color>
+    <Color x:Key="CardBackground">#FFFFFF</Color>
+    <Color x:Key="SurfaceSecondary">#F1F3F5</Color>
+    <Color x:Key="SurfaceTertiary">#E9ECEF</Color>
+
+    <!-- ===== Light Mode Text ===== -->
+    <Color x:Key="TextPrimary">#0B0D17</Color>
+    <Color x:Key="TextSecondary">#4B5563</Color>
+    <Color x:Key="TextTertiary">#9CA3AF</Color>
+    <Color x:Key="TextInverse">#FFFFFF</Color>
+
+    <!-- ===== Light Mode Borders ===== -->
+    <Color x:Key="BorderPrimary">#E2E5EA</Color>
+    <Color x:Key="BorderSecondary">#E9ECEF</Color>
+    <Color x:Key="BorderLight">#F1F3F5</Color>
+
+    <!-- ===== Dark Mode Surfaces ===== -->
+    <Color x:Key="DarkPageBackground">#0B0D17</Color>
+    <Color x:Key="DarkCardBackground">#151725</Color>
+    <Color x:Key="DarkSurfaceSecondary">#1A1C2E</Color>
+    <Color x:Key="DarkSurfaceTertiary">#212336</Color>
+
+    <!-- ===== Dark Mode Text ===== -->
+    <Color x:Key="DarkTextPrimary">#F1F3F5</Color>
+    <Color x:Key="DarkTextSecondary">#9CA3AF</Color>
+    <Color x:Key="DarkTextTertiary">#6B7280</Color>
+    <Color x:Key="DarkTextInverse">#0B0D17</Color>
+
+    <!-- ===== Dark Mode Borders ===== -->
+    <Color x:Key="DarkBorderPrimary">#2A2D3E</Color>
+    <Color x:Key="DarkBorderSecondary">#1E2032</Color>
+
+    <!-- ===== Legacy / Base ===== -->
     <Color x:Key="White">White</Color>
     <Color x:Key="Black">Black</Color>
-    <Color x:Key="Magenta">#D600AA</Color>
-    <Color x:Key="MidnightBlue">#190649</Color>
-    <Color x:Key="OffBlack">#1E1E2E</Color>
+    <Color x:Key="Transparent">Transparent</Color>
 
-    <!-- Grays -->
-    <Color x:Key="Gray100">#F3F4F6</Color>
-    <Color x:Key="Gray200">#E5E7EB</Color>
-    <Color x:Key="Gray300">#D1D5DB</Color>
-    <Color x:Key="Gray400">#9CA3AF</Color>
-    <Color x:Key="Gray500">#6B7280</Color>
-    <Color x:Key="Gray600">#4B5563</Color>
-    <Color x:Key="Gray900">#1F2937</Color>
-    <Color x:Key="Gray950">#111827</Color>
+    <!-- ===== Shadows ===== -->
+    <Shadow x:Key="CardShadow" Brush="#000000" Offset="0,2" Radius="12" Opacity="0.08" />
+    <Shadow x:Key="ElevatedShadow" Brush="#000000" Offset="0,4" Radius="16" Opacity="0.12" />
+    <Shadow x:Key="FloatingShadow" Brush="#000000" Offset="0,6" Radius="24" Opacity="0.16" />
 
-    <!-- Theme-specific base colors -->
-    <Color x:Key="PageBackground">#F3F4F6</Color>
-    <Color x:Key="CardBackground">White</Color>
-    <Color x:Key="TextPrimary">#1F2937</Color>
-
-    <!-- Shadows -->
-    <Shadow x:Key="CardShadow" Brush="#000000" Offset="0,2" Radius="8" Opacity="0.1" />
-
-    <!-- Brushes -->
+    <!-- ===== Brushes ===== -->
     <SolidColorBrush x:Key="PrimaryBrush" Color="{StaticResource Primary}"/>
+    <SolidColorBrush x:Key="OnPrimaryBrush" Color="{StaticResource OnPrimary}"/>
     <SolidColorBrush x:Key="SecondaryBrush" Color="{StaticResource Secondary}"/>
-    <SolidColorBrush x:Key="TertiaryBrush" Color="{StaticResource Tertiary}"/>
+    <SolidColorBrush x:Key="SuccessBrush" Color="{StaticResource Success}"/>
+    <SolidColorBrush x:Key="WarningBrush" Color="{StaticResource Warning}"/>
+    <SolidColorBrush x:Key="DangerBrush" Color="{StaticResource Danger}"/>
     <SolidColorBrush x:Key="WhiteBrush" Color="{StaticResource White}"/>
     <SolidColorBrush x:Key="BlackBrush" Color="{StaticResource Black}"/>
-    <SolidColorBrush x:Key="Gray100Brush" Color="{StaticResource Gray100}"/>
-    <SolidColorBrush x:Key="Gray200Brush" Color="{StaticResource Gray200}"/>
-    <SolidColorBrush x:Key="Gray300Brush" Color="{StaticResource Gray300}"/>
-    <SolidColorBrush x:Key="Gray400Brush" Color="{StaticResource Gray400}"/>
-    <SolidColorBrush x:Key="Gray500Brush" Color="{StaticResource Gray500}"/>
-    <SolidColorBrush x:Key="Gray600Brush" Color="{StaticResource Gray600}"/>
-    <SolidColorBrush x:Key="Gray900Brush" Color="{StaticResource Gray900}"/>
-    <SolidColorBrush x:Key="Gray950Brush" Color="{StaticResource Gray950}"/>
 
 </ResourceDictionary>

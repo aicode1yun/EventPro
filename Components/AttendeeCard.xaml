@@ -3,49 +3,80 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Ticket.Components.AttendeeCard">
 
-    <Border StrokeShape="RoundRectangle 12"
-            Stroke="{StaticResource Gray200}"
-            BackgroundColor="{StaticResource CardBackground}"
-            Padding="16"
-            Shadow="{StaticResource CardShadow}">
-        <Grid ColumnDefinitions="48,*,Auto" ColumnSpacing="12">
-            <Border StrokeShape="RoundRectangle 24"
-                    WidthRequest="48" HeightRequest="48"
-                    BackgroundColor="{StaticResource PrimaryLight}"
+    <Border Style="{StaticResource Card}" Padding="14">
+        <Grid ColumnDefinitions="52,*,Auto" ColumnSpacing="14">
+            <!-- Avatar with photo or initials -->
+            <Border x:Name="AvatarBorder"
+                    StrokeShape="RoundRectangle 9999"
+                    WidthRequest="52" HeightRequest="52"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource PrimaryContainer}, Dark={StaticResource DarkSurfaceTertiary}}"
+                    StrokeThickness="0"
                     VerticalOptions="Center">
-                <Label x:Name="InitialsLabel"
-                       FontSize="18"
-                       FontAttributes="Bold"
-                       TextColor="{StaticResource Primary}"
-                       HorizontalOptions="Center"
-                       VerticalOptions="Center" />
+                <Grid>
+                    <Image x:Name="PhotoImage"
+                           Aspect="AspectFill"
+                           WidthRequest="52" HeightRequest="52"
+                           IsVisible="False" />
+                    <Label x:Name="InitialsLabel"
+                           FontSize="20"
+                           FontAttributes="Bold"
+                           TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource Secondary}}"
+                           HorizontalOptions="Center"
+                           VerticalOptions="Center" />
+                </Grid>
             </Border>
 
-            <VerticalStackLayout Grid.Column="1" Spacing="4" VerticalOptions="Center">
+            <!-- Name + ticket info -->
+            <VerticalStackLayout Grid.Column="1" Spacing="3" VerticalOptions="Center">
                 <Label x:Name="NameLabel"
                        FontSize="16"
                        FontAttributes="Bold"
-                       TextColor="{StaticResource TextPrimary}" />
-                <Label x:Name="TicketCodeLabel"
-                       FontSize="12"
-                       TextColor="{StaticResource Gray600}" />
-                <HorizontalStackLayout Spacing="8">
-                    <Label x:Name="TicketTypeLabel"
+                       TextColor="{AppThemeBinding Light={StaticResource TextPrimary}, Dark={StaticResource DarkTextPrimary}}"
+                       LineBreakMode="TailTruncation" />
+                <HorizontalStackLayout Spacing="4">
+                    <Label FontSize="12"
+                           FontFamily="FAS"
+                           Text="&#xf126;"
+                           TextColor="{AppThemeBinding Light={StaticResource TextTertiary}, Dark={StaticResource DarkTextTertiary}}"
+                           VerticalOptions="Center" />
+                    <Label x:Name="TicketCodeLabel"
                            FontSize="12"
-                           TextColor="{StaticResource Gray500}" />
-                    <Label x:Name="DateLabel"
-                           FontSize="12"
-                           TextColor="{StaticResource Gray400}" />
+                           TextColor="{AppThemeBinding Light={StaticResource TextTertiary}, Dark={StaticResource DarkTextTertiary}}"
+                           VerticalOptions="Center" />
+                </HorizontalStackLayout>
+                <HorizontalStackLayout Spacing="10">
+                    <HorizontalStackLayout Spacing="4">
+                        <Label Text="&#xf02e;"
+                               FontFamily="FAS"
+                               FontSize="11"
+                               TextColor="{AppThemeBinding Light={StaticResource TextTertiary}, Dark={StaticResource DarkTextTertiary}}"
+                               VerticalOptions="Center" />
+                        <Label x:Name="TicketTypeLabel"
+                               FontSize="12"
+                               TextColor="{AppThemeBinding Light={StaticResource TextSecondary}, Dark={StaticResource DarkTextSecondary}}" />
+                    </HorizontalStackLayout>
+                    <HorizontalStackLayout Spacing="4">
+                        <Label Text="&#xf133;"
+                               FontFamily="FAS"
+                               FontSize="11"
+                               TextColor="{AppThemeBinding Light={StaticResource TextTertiary}, Dark={StaticResource DarkTextTertiary}}"
+                               VerticalOptions="Center" />
+                        <Label x:Name="DateLabel"
+                               FontSize="12"
+                               TextColor="{AppThemeBinding Light={StaticResource TextTertiary}, Dark={StaticResource DarkTextTertiary}}" />
+                    </HorizontalStackLayout>
                 </HorizontalStackLayout>
             </VerticalStackLayout>
 
+            <!-- Status badge -->
             <Border x:Name="StatusBadge"
                     Grid.Column="2"
                     StrokeShape="RoundRectangle 8"
-                    Padding="8,4"
+                    StrokeThickness="0"
+                    Padding="10,5"
                     VerticalOptions="Center">
                 <Label x:Name="StatusLabel"
-                       FontSize="11"
+                       FontSize="12"
                        FontAttributes="Bold"
                        TextColor="White" />
             </Border>

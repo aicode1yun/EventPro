@@ -5,117 +5,160 @@
              x:Class="Ticket.Views.RegisterParticipantPage"
              x:DataType="vm:RegisterParticipantViewModel"
              Title="Register"
-             BackgroundColor="{StaticResource PageBackground}">
+             BackgroundColor="{AppThemeBinding Light={StaticResource PageBackground}, Dark={StaticResource DarkPageBackground}}">
 
-    <ScrollView>
-        <VerticalStackLayout Spacing="16" Padding="20">
-            <Label Text="Register Participant"
-                   FontSize="24"
-                   FontAttributes="Bold"
-                   TextColor="{StaticResource TextPrimary}" />
+    <Grid RowDefinitions="*,Auto">
+        <ScrollView>
+            <VerticalStackLayout Spacing="0" Padding="20,16">
 
-            <VerticalStackLayout Spacing="8" HorizontalOptions="Center">
-                <Border WidthRequest="100" HeightRequest="100"
-                        StrokeShape="RoundRectangle 50"
-                        Stroke="{StaticResource Gray300}"
-                        BackgroundColor="{StaticResource CardBackground}">
-                    <Grid>
-                        <Image Source="{Binding PhotoPreview}"
-                               Aspect="AspectFill"
-                               WidthRequest="100"
-                               HeightRequest="100" />
-                        <Label Text="&#xf030;"
-                               FontFamily="FAS"
-                               FontSize="32"
-                               TextColor="{StaticResource Gray400}"
-                               HorizontalOptions="Center"
-                               VerticalOptions="Center"
-                               IsVisible="{Binding PhotoPreview, Converter={StaticResource IsNullConverter}}" />
-                    </Grid>
-                    <Border.GestureRecognizers>
-                        <TapGestureRecognizer Command="{Binding RemovePhotoCommand}" />
-                    </Border.GestureRecognizers>
-                </Border>
+                <!-- Header -->
+                <Label Text="New Participant"
+                       Style="{StaticResource DisplayMedium}"
+                       Margin="0,0,0,4" />
+                <Label Text="Register someone for the event"
+                       Style="{StaticResource BodySmall}"
+                       Margin="0,0,0,20" />
 
-                <HorizontalStackLayout Spacing="12" HorizontalOptions="Center">
-                    <Border StrokeShape="RoundRectangle 8"
-                            BackgroundColor="{StaticResource Primary}"
-                            HeightRequest="40"
-                            Padding="16,0">
-                        <Border.GestureRecognizers>
-                            <TapGestureRecognizer Command="{Binding TakePhotoCommand}" />
-                        </Border.GestureRecognizers>
-                        <HorizontalStackLayout Spacing="6" VerticalOptions="Center">
-                            <Label Text="&#xf030;" FontFamily="FAS" TextColor="White" FontSize="14" VerticalOptions="Center" />
-                            <Label Text="Camera" TextColor="White" FontSize="13" FontAttributes="Bold" VerticalOptions="Center" />
+                <!-- Photo Section -->
+                <Border Style="{StaticResource SectionCard}" Padding="20" Margin="0,0,0,16">
+                    <VerticalStackLayout Spacing="16" HorizontalOptions="Center">
+                        <Label Text="Photo"
+                               Style="{StaticResource FormLabel}"
+                               HorizontalOptions="Center" />
+
+                        <!-- Photo preview tappable area -->
+                        <Border StrokeShape="RoundRectangle 9999"
+                                WidthRequest="140" HeightRequest="140"
+                                StrokeThickness="3"
+                                Stroke="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource Secondary}}"
+                                BackgroundColor="{AppThemeBinding Light={StaticResource SurfaceSecondary}, Dark={StaticResource DarkSurfaceSecondary}}">
+                            <Grid>
+                                <Image Source="{Binding PhotoPreview}"
+                                       Aspect="AspectFill"
+                                       WidthRequest="140" HeightRequest="140"
+                                       IsVisible="{Binding PhotoPreview, Converter={StaticResource IsNotNullConverter}}" />
+                                <VerticalStackLayout VerticalOptions="Center"
+                                                     HorizontalOptions="Center"
+                                                     IsVisible="{Binding PhotoPreview, Converter={StaticResource IsNullConverter}}">
+                                    <Label Text="&#xf030;"
+                                           FontFamily="FAS"
+                                           FontSize="40"
+                                           HorizontalOptions="Center"
+                                           TextColor="{AppThemeBinding Light={StaticResource TextTertiary}, Dark={StaticResource DarkTextTertiary}}" />
+                                    <Label Text="Add Photo"
+                                           FontSize="12"
+                                           HorizontalOptions="Center"
+                                           TextColor="{AppThemeBinding Light={StaticResource TextTertiary}, Dark={StaticResource DarkTextTertiary}}"
+                                           Margin="0,4,0,0" />
+                                </VerticalStackLayout>
+                            </Grid>
+                        </Border>
+
+                        <!-- Photo action buttons -->
+                        <HorizontalStackLayout Spacing="12" HorizontalOptions="Center">
+                            <Button Text="Camera"
+                                    Style="{StaticResource ButtonSecondary}"
+                                    Command="{Binding TakePhotoCommand}"
+                                    FontSize="13"
+                                    Padding="16,10"
+                                    HeightRequest="40" />
+                            <Button Text="Gallery"
+                                    Style="{StaticResource ButtonOutline}"
+                                    Command="{Binding PickPhotoCommand}"
+                                    FontSize="13"
+                                    Padding="16,10"
+                                    HeightRequest="40" />
+                            <Button Text="Remove"
+                                    Style="{StaticResource ButtonGhost}"
+                                    Command="{Binding RemovePhotoCommand}"
+                                    FontSize="13"
+                                    Padding="12,10"
+                                    HeightRequest="40"
+                                    IsVisible="{Binding PhotoPreview, Converter={StaticResource IsNotNullConverter}}"
+                                    TextColor="{StaticResource Danger}" />
                         </HorizontalStackLayout>
-                    </Border>
-                    <Border StrokeShape="RoundRectangle 8"
-                            BackgroundColor="{StaticResource Accent}"
-                            HeightRequest="40"
-                            Padding="16,0">
-                        <Border.GestureRecognizers>
-                            <TapGestureRecognizer Command="{Binding PickPhotoCommand}" />
-                        </Border.GestureRecognizers>
-                        <HorizontalStackLayout Spacing="6" VerticalOptions="Center">
-                            <Label Text="&#xf03e;" FontFamily="FAS" TextColor="White" FontSize="14" VerticalOptions="Center" />
-                            <Label Text="Browse" TextColor="White" FontSize="13" FontAttributes="Bold" VerticalOptions="Center" />
-                        </HorizontalStackLayout>
-                    </Border>
-                </HorizontalStackLayout>
-            </VerticalStackLayout>
-
-            <VerticalStackLayout Spacing="6">
-                <Label Text="Full Name" FontSize="14" TextColor="{StaticResource TextPrimary}" />
-                <Border StrokeShape="RoundRectangle 8" Stroke="{StaticResource Gray300}" Padding="12,0" BackgroundColor="{StaticResource CardBackground}">
-                    <Entry Text="{Binding FullName}" Placeholder="John Doe" ReturnType="Next" />
+                    </VerticalStackLayout>
                 </Border>
-            </VerticalStackLayout>
 
-            <VerticalStackLayout Spacing="6">
-                <Label Text="Phone Number" FontSize="14" TextColor="{StaticResource TextPrimary}" />
-                <Border StrokeShape="RoundRectangle 8" Stroke="{StaticResource Gray300}" Padding="12,0" BackgroundColor="{StaticResource CardBackground}">
-                    <Entry Text="{Binding PhoneNumber}" Placeholder="+1234567890" Keyboard="Telephone" ReturnType="Next" />
+                <!-- Personal Info Section -->
+                <Label Text="Personal Information"
+                       Style="{StaticResource Eyebrow}"
+                       Margin="0,0,0,10" />
+                <Border Style="{StaticResource SectionCard}" Padding="20" Margin="0,0,0,16">
+                    <VerticalStackLayout Spacing="18">
+                        <VerticalStackLayout Spacing="6">
+                            <Label Text="Full Name" Style="{StaticResource FormLabel}" />
+                            <Border Style="{StaticResource FormField}">
+                                <Entry Placeholder="e.g. John Smith"
+                                       Text="{Binding FullName}"
+                                       ReturnType="Next" />
+                            </Border>
+                        </VerticalStackLayout>
+
+                        <VerticalStackLayout Spacing="6">
+                            <Label Text="Phone Number" Style="{StaticResource FormLabel}" />
+                            <Border Style="{StaticResource FormField}">
+                                <Entry Placeholder="e.g. +1 234 567 890"
+                                       Keyboard="Telephone"
+                                       Text="{Binding PhoneNumber}"
+                                       ReturnType="Next" />
+                            </Border>
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
                 </Border>
-            </VerticalStackLayout>
 
-            <VerticalStackLayout Spacing="6">
-                <Label Text="Ticket Type" FontSize="14" TextColor="{StaticResource TextPrimary}" />
-                <Border StrokeShape="RoundRectangle 8" Stroke="{StaticResource Gray300}" Padding="12,0" BackgroundColor="{StaticResource CardBackground}">
-                    <Picker ItemsSource="{Binding TicketTypes}"
-                            SelectedItem="{Binding TicketType}"
-                            Title="Select ticket type" />
+                <!-- Ticket Details Section -->
+                <Label Text="Ticket Details"
+                       Style="{StaticResource Eyebrow}"
+                       Margin="0,0,0,10" />
+                <Border Style="{StaticResource SectionCard}" Padding="20" Margin="0,0,0,16">
+                    <VerticalStackLayout Spacing="18">
+                        <VerticalStackLayout Spacing="6">
+                            <Label Text="Ticket Type" Style="{StaticResource FormLabel}" />
+                            <Border Style="{StaticResource FormField}" Padding="16,0">
+                                <Picker Title="Select ticket type"
+                                        ItemsSource="{Binding TicketTypes}"
+                                        SelectedItem="{Binding TicketType}" />
+                            </Border>
+                        </VerticalStackLayout>
+
+                        <VerticalStackLayout Spacing="6">
+                            <Label Text="Payment Status" Style="{StaticResource FormLabel}" />
+                            <Border Style="{StaticResource FormField}" Padding="16,0">
+                                <Picker Title="Select payment status"
+                                        ItemsSource="{Binding PaymentStatuses}"
+                                        SelectedItem="{Binding PaymentStatus}" />
+                            </Border>
+                        </VerticalStackLayout>
+
+                        <VerticalStackLayout Spacing="6">
+                            <Label Text="Notes (optional)" Style="{StaticResource FormLabel}" />
+                            <Border Style="{StaticResource FormField}"
+                                    HeightRequest="100"
+                                    Padding="16,8">
+                                <Editor Placeholder="Additional notes..."
+                                        Text="{Binding Notes}"
+                                        HeightRequest="84" />
+                            </Border>
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
                 </Border>
-            </VerticalStackLayout>
 
-            <VerticalStackLayout Spacing="6">
-                <Label Text="Payment Status" FontSize="14" TextColor="{StaticResource TextPrimary}" />
-                <Border StrokeShape="RoundRectangle 8" Stroke="{StaticResource Gray300}" Padding="12,0" BackgroundColor="{StaticResource CardBackground}">
-                    <Picker ItemsSource="{Binding PaymentStatuses}"
-                            SelectedItem="{Binding PaymentStatus}"
-                            Title="Select payment status" />
-                </Border>
-            </VerticalStackLayout>
+                
 
-            <VerticalStackLayout Spacing="6">
-                <Label Text="Notes (optional)" FontSize="14" TextColor="{StaticResource TextPrimary}" />
-                <Border StrokeShape="RoundRectangle 8" Stroke="{StaticResource Gray300}" Padding="12,0" BackgroundColor="{StaticResource CardBackground}">
-                    <Editor Text="{Binding Notes}" Placeholder="Any notes..." HeightRequest="100" />
-                </Border>
             </VerticalStackLayout>
+        </ScrollView>
 
-            <Button Text="Generate Ticket"
+        <!-- Bottom Save Button -->
+        <Border Grid.Row="1"
+                BackgroundColor="{AppThemeBinding Light={StaticResource CardBackground}, Dark={StaticResource DarkCardBackground}}"
+                Padding="20,12,20,28">
+            <Button Text="Register Participant"
                     Command="{Binding SaveCommand}"
-                    BackgroundColor="{StaticResource Primary}"
-                    TextColor="White"
-                    FontAttributes="Bold"
-                    FontSize="16"
-                    HeightRequest="50"
-                    CornerRadius="12"
-                    Margin="0,8,0,0" />
-
-            <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" Color="{StaticResource Primary}" />
-        </VerticalStackLayout>
-    </ScrollView>
+                    IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBoolConverter}}"
+                    HeightRequest="52"
+                    FontSize="16" />
+        </Border>
+    </Grid>
 
 </ContentPage>

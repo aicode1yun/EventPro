@@ -2,77 +2,85 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:Ticket.ViewModels"
+             xmlns:skia="clr-namespace:SkiaSharp.Views.Maui.Controls;assembly=SkiaSharp.Views.Maui.Controls"
              x:Class="Ticket.Views.TicketPreviewPage"
              x:DataType="vm:TicketPreviewViewModel"
              Title="Ticket"
-             BackgroundColor="{StaticResource PageBackground}">
+             BackgroundColor="{AppThemeBinding Light={StaticResource PageBackground}, Dark={StaticResource DarkPageBackground}}">
 
-    <ScrollView>
-        <VerticalStackLayout Spacing="20" Padding="20">
-            <Label Text="Your Ticket"
-                   FontSize="28"
-                   FontAttributes="Bold"
-                   TextColor="{StaticResource Primary}"
-                   HorizontalOptions="Center" />
+    <Grid RowDefinitions="*,Auto">
+        <!-- Ticket Image -->
+        <ScrollView>
+            <VerticalStackLayout Spacing="0" Padding="20,16">
+                <!-- Header -->
+                <Label Text="Your Ticket"
+                       Style="{StaticResource DisplayMedium}"
+                       Margin="0,0,0,4" />
+                <Label Text="Share or save to gallery"
+                       Style="{StaticResource BodySmall}"
+                       Margin="0,0,0,20" />
 
-            <Border StrokeShape="RoundRectangle 12"
-                    Stroke="{StaticResource Gray200}"
-                    BackgroundColor="{StaticResource CardBackground}"
-                    Padding="6"
-                    Shadow="{StaticResource CardShadow}">
-                <Image Source="{Binding TicketImage}"
-                       Aspect="AspectFit"
-                       WidthRequest="360"
-                       HorizontalOptions="Center" />
-            </Border>
+                <!-- Loading indicator -->
+                <ActivityIndicator IsRunning="{Binding IsBusy}"
+                                   IsVisible="{Binding IsBusy}"
+                                   HorizontalOptions="Center"
+                                   VerticalOptions="Center"
+                                   HeightRequest="40"
+                                   Margin="0,60,0,60" />
 
-            <Border StrokeShape="RoundRectangle 25"
-                    BackgroundColor="#10B981"
-                    HeightRequest="50"
-                    Padding="16">
-                <Border.GestureRecognizers>
-                    <TapGestureRecognizer Command="{Binding SaveToGalleryCommand}" />
-                </Border.GestureRecognizers>
-                <HorizontalStackLayout Spacing="8" VerticalOptions="Center" HorizontalOptions="Center">
-                    <Label Text="&#xf0c7;" FontFamily="FAS" TextColor="White" FontSize="18" VerticalOptions="Center" />
-                    <Label Text="Save to Gallery" TextColor="White" FontSize="16" FontAttributes="Bold" VerticalOptions="Center" />
-                </HorizontalStackLayout>
-            </Border>
+                <!-- Ticket Image -->
+                <Border Style="{StaticResource Card}"
+                        Padding="8"
+                        IsVisible="{Binding IsBusy, Converter={StaticResource InverseBoolConverter}}">
+                    <Image Source="{Binding TicketImage}"
+                           Aspect="AspectFit"
+                           HorizontalOptions="Center" />
+                </Border>
 
-            <Label Text="&#x2713;  Saved to Gallery"
-                   FontFamily="FAS"
-                   FontSize="14"
-                   TextColor="#10B981"
-                   HorizontalOptions="Center"
-                   IsVisible="{Binding SaveDone}" />
+                <!-- Share/Save buttons -->
+                <Grid ColumnDefinitions="*,*"
+                      ColumnSpacing="12"
+                      Margin="0,20,0,0"
+                      IsVisible="{Binding IsBusy, Converter={StaticResource InverseBoolConverter}}">
+                    <Button Text="&#xf1e0;  Share"
+                            Style="{StaticResource ButtonSecondary}"
+                            Command="{Binding ShareTicketCommand}"
+                            HeightRequest="50"
+                            FontSize="14" />
+                    <Button Grid.Column="1"
+                            Text="&#xf0a0;  Save"
+                            Style="{StaticResource ButtonSecondary}"
+                            Command="{Binding SaveToGalleryCommand}"
+                            HeightRequest="50"
+                            FontSize="14" />
+                </Grid>
 
-            <Border StrokeShape="RoundRectangle 25"
-                    BackgroundColor="{StaticResource Accent}"
-                    HeightRequest="50"
-                    Padding="16">
-                <Border.GestureRecognizers>
-                    <TapGestureRecognizer Command="{Binding ShareTicketCommand}" />
-                </Border.GestureRecognizers>
-                <HorizontalStackLayout Spacing="8" VerticalOptions="Center" HorizontalOptions="Center">
-                    <Label Text="&#xf1e0;" FontFamily="FAS" TextColor="White" FontSize="18" VerticalOptions="Center" />
-                    <Label Text="Share Ticket" TextColor="White" FontSize="16" FontAttributes="Bold" VerticalOptions="Center" />
-                </HorizontalStackLayout>
-            </Border>
+                <!-- Saved confirmation -->
+                <Border BackgroundColor="{AppThemeBinding Light={StaticResource SuccessLight}, Dark=#0A2E1A}"
+                        StrokeShape="RoundRectangle 10"
+                        StrokeThickness="0"
+                        Padding="14,10"
+                        Margin="0,12,0,0"
+                        IsVisible="{Binding SaveDone}">
+                    <Label Text="&#xf00c;  Saved to gallery!"
+                           FontFamily="FAS"
+                           FontSize="13"
+                           TextColor="{StaticResource Success}"
+                           HorizontalTextAlignment="Center" />
+                </Border>
 
-            <Border StrokeShape="RoundRectangle 25"
-                    BackgroundColor="{StaticResource Primary}"
-                    HeightRequest="50"
-                    Padding="16">
-                <Border.GestureRecognizers>
-                    <TapGestureRecognizer Command="{Binding DoneCommand}" />
-                </Border.GestureRecognizers>
-                <HorizontalStackLayout Spacing="8" VerticalOptions="Center" HorizontalOptions="Center">
-                    <Label Text="Done" TextColor="White" FontSize="16" FontAttributes="Bold" VerticalOptions="Center" />
-                </HorizontalStackLayout>
-            </Border>
+            </VerticalStackLayout>
+        </ScrollView>
 
-            <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" Color="{StaticResource Primary}" />
-        </VerticalStackLayout>
-    </ScrollView>
+        <!-- Bottom Done button -->
+        <Border Grid.Row="1"
+                BackgroundColor="{AppThemeBinding Light={StaticResource CardBackground}, Dark={StaticResource DarkCardBackground}}"
+                Padding="20,12,20,28">
+            <Button Text="Done"
+                    Command="{Binding DoneCommand}"
+                    Style="{StaticResource ButtonOutline}"
+                    HeightRequest="50" />
+        </Border>
+    </Grid>
 
 </ContentPage>

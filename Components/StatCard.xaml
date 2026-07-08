@@ -3,26 +3,45 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Ticket.Components.StatCard">
 
-    <Border StrokeShape="RoundRectangle 12"
-            Stroke="{StaticResource Gray200}"
-            BackgroundColor="{StaticResource CardBackground}"
-            Padding="16"
-            Shadow="{StaticResource CardShadow}">
-        <VerticalStackLayout Spacing="8">
-            <Label x:Name="IconLabel"
-                   FontSize="28"
-                   FontFamily="FAS"
-                   HorizontalOptions="Center" />
+    <Border Style="{StaticResource Card}"
+            Padding="0"
+            MinimumHeightRequest="120">
+        <Grid Padding="20" RowSpacing="8">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <!-- Icon -->
+            <Border Grid.Row="0"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource PrimaryContainer}, Dark={StaticResource DarkSurfaceTertiary}}"
+                    StrokeShape="RoundRectangle 10"
+                    StrokeThickness="0"
+                    WidthRequest="40" HeightRequest="40"
+                    HorizontalOptions="Start">
+                <Label x:Name="IconLabel"
+                       FontSize="18"
+                       FontFamily="FAS"
+                       TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource Secondary}}"
+                       HorizontalOptions="Center"
+                       VerticalOptions="Center" />
+            </Border>
+
+            <!-- Value -->
             <Label x:Name="ValueLabel"
+                   Grid.Row="1"
                    FontSize="32"
                    FontAttributes="Bold"
-                   HorizontalOptions="Center"
-                   TextColor="{StaticResource Primary}" />
+                   VerticalOptions="End"
+                   TextColor="{AppThemeBinding Light={StaticResource TextPrimary}, Dark={StaticResource DarkTextPrimary}}" />
+
+            <!-- Title -->
             <Label x:Name="TitleLabel"
-                   FontSize="14"
-                   HorizontalOptions="Center"
-                   TextColor="{StaticResource Gray600}" />
-        </VerticalStackLayout>
+                   Grid.Row="2"
+                   FontSize="13"
+                   TextColor="{AppThemeBinding Light={StaticResource TextSecondary}, Dark={StaticResource DarkTextSecondary}}" />
+        </Grid>
     </Border>
 
 </ContentView>

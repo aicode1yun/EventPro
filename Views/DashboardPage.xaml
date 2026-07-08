@@ -2,80 +2,217 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:Ticket.ViewModels"
-             xmlns:comp="clr-namespace:Ticket.Components"
+             xmlns:components="clr-namespace:Ticket.Components"
              x:Class="Ticket.Views.DashboardPage"
              x:DataType="vm:DashboardViewModel"
              Title="Dashboard"
-             BackgroundColor="{StaticResource PageBackground}">
+             BackgroundColor="{AppThemeBinding Light={StaticResource PageBackground}, Dark={StaticResource DarkPageBackground}}">
 
-    <RefreshView IsRefreshing="{Binding IsBusy}" Command="{Binding LoadStatsCommand}">
+    <RefreshView Command="{Binding LoadStatsCommand}"
+                 IsRefreshing="{Binding IsBusy}">
         <ScrollView>
-            <VerticalStackLayout Spacing="20" Padding="20">
-                <Label Text="Dashboard"
-                       FontSize="28"
-                       FontAttributes="Bold"
-                       TextColor="{StaticResource TextPrimary}" />
+            <VerticalStackLayout Spacing="0" Padding="20,16">
 
+                <!-- Greeting Section -->
                 <Label x:Name="DateLabel"
-                       FontSize="14"
-                       TextColor="{StaticResource Gray600}" />
+                       Style="{StaticResource Eyebrow}"
+                       Margin="0,0,0,4" />
+                <Label Text="Dashboard"
+                       Style="{StaticResource DisplayMedium}"
+                       Margin="0,0,0,24" />
 
-                <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto" ColumnSpacing="12" RowSpacing="12">
-                    <comp:StatCard Icon="&#xf0c0;" Value="{Binding TotalParticipants}" CardTitle="Total Registered"
-                                   Grid.Row="0" Grid.Column="0" />
-                    <comp:StatCard Icon="&#xf00c;" Value="{Binding CheckedInCount}" CardTitle="Checked In"
-                                   Grid.Row="0" Grid.Column="1" />
-                    <comp:StatCard Icon="&#xf252;" Value="{Binding RemainingCount}" CardTitle="Remaining"
-                                   Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" />
+                <!-- Bento Grid - Stats -->
+                <Grid RowDefinitions="Auto,Auto"
+                      ColumnDefinitions="*,*"
+                      RowSpacing="14"
+                      ColumnSpacing="14"
+                      Margin="0,0,0,24">
+
+                    <!-- Total Participants (spans full width) -->
+                    <Border Grid.Row="0" Grid.ColumnSpan="2"
+                            Style="{StaticResource Card}"
+                            Padding="0"
+                            BackgroundColor="{AppThemeBinding Light={StaticResource Primary}, Dark=#1E1F4A}">
+                        <Grid Padding="24" ColumnDefinitions="*,Auto">
+                            <VerticalStackLayout Spacing="6" VerticalOptions="Center">
+                                <Label Text="Total Participants"
+                                       FontSize="14"
+                                       TextColor="{AppThemeBinding Light=#D0D5FF, Dark=#A5B4FC}" />
+                                <Label Text="{Binding TotalParticipants}"
+                                       FontSize="42"
+                                       FontAttributes="Bold"
+                                       TextColor="White" />
+                            </VerticalStackLayout>
+                            <Border Grid.Column="1"
+                                    BackgroundColor="#30FFFFFF"
+                                    StrokeShape="RoundRectangle 16"
+                                    StrokeThickness="0"
+                                    WidthRequest="64" HeightRequest="64"
+                                    VerticalOptions="Center">
+                                <Label Text="&#xf0c0;"
+                                       FontFamily="FAS"
+                                       FontSize="28"
+                                       TextColor="White"
+                                       HorizontalOptions="Center"
+                                       VerticalOptions="Center" />
+                            </Border>
+                        </Grid>
+                    </Border>
+
+                    <!-- Checked In -->
+                    <Border Grid.Row="1" Grid.Column="0"
+                            Style="{StaticResource Card}" Padding="0">
+                        <Grid Padding="20" RowSpacing="10" RowDefinitions="Auto,Auto,Auto">
+                            <Border BackgroundColor="{AppThemeBinding Light={StaticResource SuccessLight}, Dark=#0A2E1A}"
+                                    StrokeShape="RoundRectangle 10"
+                                    StrokeThickness="0"
+                                    WidthRequest="40" HeightRequest="40"
+                                    HorizontalOptions="Start">
+                                <Label Text="&#xf00c;"
+                                       FontFamily="FAS"
+                                       FontSize="18"
+                                       TextColor="{StaticResource Success}"
+                                       HorizontalOptions="Center"
+                                       VerticalOptions="Center" />
+                            </Border>
+                            <Label Grid.Row="1"
+                                   Text="{Binding CheckedInCount}"
+                                   FontSize="28"
+                                   FontAttributes="Bold"
+                                   TextColor="{AppThemeBinding Light={StaticResource TextPrimary}, Dark={StaticResource DarkTextPrimary}}" />
+                            <Label Grid.Row="2"
+                                   Text="Checked In"
+                                   Style="{StaticResource Caption}" />
+                        </Grid>
+                    </Border>
+
+                    <!-- Remaining -->
+                    <Border Grid.Row="1" Grid.Column="1"
+                            Style="{StaticResource Card}" Padding="0">
+                        <Grid Padding="20" RowSpacing="10" RowDefinitions="Auto,Auto,Auto">
+                            <Border BackgroundColor="{AppThemeBinding Light={StaticResource WarningLight}, Dark=#2E2000}"
+                                    StrokeShape="RoundRectangle 10"
+                                    StrokeThickness="0"
+                                    WidthRequest="40" HeightRequest="40"
+                                    HorizontalOptions="Start">
+                                <Label Text="&#xf017;"
+                                       FontFamily="FAS"
+                                       FontSize="18"
+                                       TextColor="{StaticResource Warning}"
+                                       HorizontalOptions="Center"
+                                       VerticalOptions="Center" />
+                            </Border>
+                            <Label Grid.Row="1"
+                                   Text="{Binding RemainingCount}"
+                                   FontSize="28"
+                                   FontAttributes="Bold"
+                                   TextColor="{AppThemeBinding Light={StaticResource TextPrimary}, Dark={StaticResource DarkTextPrimary}}" />
+                            <Label Grid.Row="2"
+                                   Text="Remaining"
+                                   Style="{StaticResource Caption}" />
+                        </Grid>
+                    </Border>
                 </Grid>
 
+                <!-- Quick Actions Section -->
                 <Label Text="Quick Actions"
-                       FontSize="20"
-                       FontAttributes="Bold"
-                       TextColor="{StaticResource TextPrimary}"
-                       Margin="0,8,0,0" />
+                       Style="{StaticResource Subheadline}"
+                       Margin="0,0,0,14" />
 
-                <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto" ColumnSpacing="12" RowSpacing="12">
-                    <Border StrokeShape="RoundRectangle 12"
-                            BackgroundColor="{StaticResource Primary}"
-                            HeightRequest="80"
-                            Padding="16"
-                            Grid.Row="0" Grid.Column="0">
+                <Grid RowDefinitions="Auto,Auto"
+                      ColumnDefinitions="*,*"
+                      RowSpacing="12"
+                      ColumnSpacing="12">
+
+                    <!-- Register -->
+                    <Border Grid.Row="0" Grid.Column="0"
+                            Style="{StaticResource Card}"
+                            Padding="0"
+                            BackgroundColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}">
                         <Border.GestureRecognizers>
                             <TapGestureRecognizer Command="{Binding GoToRegisterCommand}" />
                         </Border.GestureRecognizers>
-                        <HorizontalStackLayout Spacing="8" VerticalOptions="Center" HorizontalOptions="Center">
-                            <Label Text="&#xf328;" FontFamily="FAS" TextColor="White" FontSize="20" VerticalOptions="Center" />
-                            <Label Text="Register Participant" TextColor="White" FontSize="14" VerticalOptions="Center" />
-                        </HorizontalStackLayout>
+                        <VerticalStackLayout Padding="20" Spacing="10" HorizontalOptions="Center">
+                            <Label Text="&#xf328;"
+                                   FontFamily="FAS"
+                                   FontSize="28"
+                                   TextColor="White"
+                                   HorizontalOptions="Center" />
+                            <Label Text="Register"
+                                   FontSize="14"
+                                   FontAttributes="Bold"
+                                   TextColor="White"
+                                   HorizontalOptions="Center" />
+                        </VerticalStackLayout>
                     </Border>
-                    <Border StrokeShape="RoundRectangle 12"
-                            BackgroundColor="{StaticResource Accent}"
-                            HeightRequest="80"
-                            Padding="16"
-                            Grid.Row="0" Grid.Column="1">
+
+                    <!-- Scan -->
+                    <Border Grid.Row="0" Grid.Column="1"
+                            Style="{StaticResource Card}"
+                            Padding="0">
                         <Border.GestureRecognizers>
                             <TapGestureRecognizer Command="{Binding GoToScanCommand}" />
                         </Border.GestureRecognizers>
-                        <HorizontalStackLayout Spacing="8" VerticalOptions="Center" HorizontalOptions="Center">
-                            <Label Text="&#xf030;" FontFamily="FAS" TextColor="White" FontSize="20" VerticalOptions="Center" />
-                            <Label Text="Scan Ticket" TextColor="White" FontSize="14" VerticalOptions="Center" />
-                        </HorizontalStackLayout>
+                        <VerticalStackLayout Padding="20" Spacing="10" HorizontalOptions="Center">
+                            <Label Text="&#xf030;"
+                                   FontFamily="FAS"
+                                   FontSize="28"
+                                   TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource Secondary}}"
+                                   HorizontalOptions="Center" />
+                            <Label Text="Scan Tickets"
+                                   FontSize="14"
+                                   FontAttributes="Bold"
+                                   TextColor="{AppThemeBinding Light={StaticResource TextPrimary}, Dark={StaticResource DarkTextPrimary}}"
+                                   HorizontalOptions="Center" />
+                        </VerticalStackLayout>
                     </Border>
-                    <Border StrokeShape="RoundRectangle 12"
-                            BackgroundColor="{StaticResource PrimaryDark}"
-                            HeightRequest="80"
-                            Padding="16"
-                            Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
+
+                    <!-- Participants -->
+                    <Border Grid.Row="1" Grid.Column="0"
+                            Style="{StaticResource Card}"
+                            Padding="0">
                         <Border.GestureRecognizers>
                             <TapGestureRecognizer Command="{Binding GoToParticipantsCommand}" />
                         </Border.GestureRecognizers>
-                        <HorizontalStackLayout Spacing="8" VerticalOptions="Center" HorizontalOptions="Center">
-                            <Label Text="&#xf0c0;" FontFamily="FAS" TextColor="White" FontSize="20" VerticalOptions="Center" />
-                            <Label Text="View Participants" TextColor="White" FontSize="14" VerticalOptions="Center" />
-                        </HorizontalStackLayout>
+                        <VerticalStackLayout Padding="20" Spacing="10" HorizontalOptions="Center">
+                            <Label Text="&#xf0c0;"
+                                   FontFamily="FAS"
+                                   FontSize="28"
+                                   TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource Secondary}}"
+                                   HorizontalOptions="Center" />
+                            <Label Text="Participants"
+                                   FontSize="14"
+                                   FontAttributes="Bold"
+                                   TextColor="{AppThemeBinding Light={StaticResource TextPrimary}, Dark={StaticResource DarkTextPrimary}}"
+                                   HorizontalOptions="Center" />
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <!-- Settings (Admin only) -->
+                    <Border Grid.Row="1" Grid.Column="1"
+                            Style="{StaticResource Card}"
+                            Padding="0"
+                            IsVisible="{Binding IsAdmin}">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding GoToSettingsCommand}" />
+                        </Border.GestureRecognizers>
+                        <VerticalStackLayout Padding="20" Spacing="10" HorizontalOptions="Center">
+                            <Label Text="&#xf013;"
+                                   FontFamily="FAS"
+                                   FontSize="28"
+                                   TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource Secondary}}"
+                                   HorizontalOptions="Center" />
+                            <Label Text="Settings"
+                                   FontSize="14"
+                                   FontAttributes="Bold"
+                                   TextColor="{AppThemeBinding Light={StaticResource TextPrimary}, Dark={StaticResource DarkTextPrimary}}"
+                                   HorizontalOptions="Center" />
+                        </VerticalStackLayout>
                     </Border>
                 </Grid>
+
+                
+
             </VerticalStackLayout>
         </ScrollView>
     </RefreshView>

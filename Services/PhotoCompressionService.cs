@@ -28,13 +28,19 @@ namespace Ticket.Services
                     if (bitmap == null)
                         return null;
 
-                    // Calculate new dimensions maintaining aspect ratio
-                    var (newWidth, newHeight) = CalculateDimensions(bitmap.Width, bitmap.Height, maxWidth, maxHeight);
+                    // Center-crop to square before resize
+                    int cropSize = Math.Min(bitmap.Width, bitmap.Height);
+                    int cropX = (bitmap.Width - cropSize) / 2;
+                    int cropY = (bitmap.Height - cropSize) / 2;
+                    var cropRect = new SKRectI(cropX, cropY, cropX + cropSize, cropY + cropSize);
+                    using var croppedBitmap = new SKBitmap(cropSize, cropSize);
+                    bitmap.ExtractSubset(croppedBitmap, cropRect);
 
-                    // Create scaled bitmap
+                    var (newWidth, newHeight) = CalculateDimensions(croppedBitmap.Width, croppedBitmap.Height, maxWidth, maxHeight);
+
                     var newInfo = new SKImageInfo(newWidth, newHeight);
                     var sampling = new SKSamplingOptions(SKFilterMode.Linear);
-                    using var scaledBitmap = bitmap.Resize(newInfo, sampling);
+                    using var scaledBitmap = croppedBitmap.Resize(newInfo, sampling);
                     if (scaledBitmap == null)
                         return null;
 

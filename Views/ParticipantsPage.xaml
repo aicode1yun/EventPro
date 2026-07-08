@@ -2,80 +2,110 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:Ticket.ViewModels"
-             xmlns:comp="clr-namespace:Ticket.Components"
+             xmlns:components="clr-namespace:Ticket.Components"
              xmlns:models="clr-namespace:Ticket.Models"
              x:Class="Ticket.Views.ParticipantsPage"
              x:DataType="vm:ParticipantsViewModel"
-             Title="Participants"
-             BackgroundColor="{StaticResource PageBackground}">
+             Title="Attendees"
+             BackgroundColor="{AppThemeBinding Light={StaticResource PageBackground}, Dark={StaticResource DarkPageBackground}}">
 
-    <RefreshView IsRefreshing="{Binding IsBusy}" Command="{Binding LoadAttendeesCommand}">
-        <Grid RowDefinitions="Auto,Auto,*" Padding="20" RowSpacing="12">
-            <Label Text="Participants"
-                   FontSize="24"
-                   FontAttributes="Bold"
-                   TextColor="{StaticResource TextPrimary}" />
+    <Grid RowDefinitions="Auto,Auto,*">
+        <!-- Search Header -->
+        <Border Style="{StaticResource Card}"
+                Margin="20,16,20,0"
+                Padding="8,0"
+                StrokeShape="RoundRectangle 14">
+            <SearchBar Placeholder="Search by name, code, or phone..."
+                       Text="{Binding SearchText}"
+                       BackgroundColor="Transparent"
+                       CancelButtonColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource Secondary}}" />
+        </Border>
 
-            <VerticalStackLayout Grid.Row="1" Spacing="12">
-                <Border StrokeShape="RoundRectangle 8" Stroke="{StaticResource Gray300}" Padding="12,0" BackgroundColor="{StaticResource CardBackground}">
-                    <Entry Placeholder="Search by name, ticket code, phone..."
-                           Text="{Binding SearchText}"
-                           ReturnType="Search" />
-                </Border>
-
-                <HorizontalStackLayout Spacing="8" BindableLayout.ItemsSource="{Binding FilterChips}">
-                    <BindableLayout.ItemTemplate>
-                        <DataTemplate x:DataType="models:FilterChip">
-                            <Border StrokeShape="RoundRectangle 16"
-                                    Padding="14,6"
-                                    BackgroundColor="{Binding IsSelected, Converter={StaticResource BoolToFilterBg}}">
-                                <Border.GestureRecognizers>
-                                    <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ParticipantsViewModel}}, Path=SelectFilterCommand}"
-                                                          CommandParameter="{Binding Text}" />
-                                </Border.GestureRecognizers>
-                                <Label Text="{Binding Text}"
-                                       FontSize="13"
-                                       TextColor="{Binding IsSelected, Converter={StaticResource BoolToFilterText}}" />
-                            </Border>
-                        </DataTemplate>
-                    </BindableLayout.ItemTemplate>
-                </HorizontalStackLayout>
-            </VerticalStackLayout>
-
-            <CollectionView ItemsSource="{Binding Attendees}"
-                            Grid.Row="2"
-                            SelectionMode="Single"
-                            SelectionChangedCommand="{Binding ViewDetailCommand}"
-                            SelectionChangedCommandParameter="{Binding SelectedItem, Source={RelativeSource Self}}">
-                <CollectionView.ItemTemplate>
-                    <DataTemplate x:DataType="models:Attendee">
-                        <SwipeView>
-                            <SwipeView.RightItems>
-                                <SwipeItems Mode="Reveal">
-                                    <SwipeItem Text="Delete"
-                                               BackgroundColor="#EF4444"
-                                               Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ParticipantsViewModel}}, Path=DeleteAttendeeCommand}"
-                                               CommandParameter="{Binding .}">
-                                        <SwipeItem.IconImageSource>
-                                            <FontImageSource Glyph="&#xf2ed;" FontFamily="FAS" Color="White" Size="20" />
-                                        </SwipeItem.IconImageSource>
-                                    </SwipeItem>
-                                </SwipeItems>
-                            </SwipeView.RightItems>
-                            <VerticalStackLayout Padding="0,4">
-                                <comp:AttendeeCard Attendee="{Binding .}" />
-                            </VerticalStackLayout>
-                        </SwipeView>
+        <!-- Filter Chips -->
+        <ScrollView Grid.Row="1"
+                    Orientation="Horizontal"
+                    Margin="20,12,20,8"
+                    HorizontalScrollBarVisibility="Never">
+            <HorizontalStackLayout Spacing="8"
+                                   BindableLayout.ItemsSource="{Binding FilterChips}">
+                <BindableLayout.ItemTemplate>
+                    <DataTemplate x:DataType="models:FilterChip">
+                        <Border BackgroundColor="{Binding IsSelected, Converter={StaticResource BoolToFilterBg}}"
+                                StrokeShape="RoundRectangle 20"
+                                StrokeThickness="0"
+                                Padding="16,8"
+                                HeightRequest="36">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ParticipantsViewModel}}, Path=SelectFilterCommand}"
+                                                      CommandParameter="{Binding Text}" />
+                            </Border.GestureRecognizers>
+                            <Label Text="{Binding Text}"
+                                   FontSize="13"
+                                   FontAttributes="Bold"
+                                   TextColor="{Binding IsSelected, Converter={StaticResource BoolToFilterText}}"
+                                   VerticalOptions="Center" />
+                        </Border>
                     </DataTemplate>
-                </CollectionView.ItemTemplate>
-                <CollectionView.EmptyView>
-                    <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center" Spacing="8">
-                        <Label Text="No participants yet" FontSize="18" TextColor="{StaticResource Gray500}" HorizontalOptions="Center" />
-                        <Label Text="Register your first participant to get started" FontSize="14" TextColor="{StaticResource Gray400}" HorizontalOptions="Center" />
-                    </VerticalStackLayout>
-                </CollectionView.EmptyView>
-            </CollectionView>
-        </Grid>
-    </RefreshView>
+                </BindableLayout.ItemTemplate>
+            </HorizontalStackLayout>
+        </ScrollView>
+
+        <!-- Participant List -->
+        <CollectionView Grid.Row="2"
+                        ItemsSource="{Binding Attendees}"
+                        Margin="20,4,20,0">
+            <CollectionView.ItemsLayout>
+                <LinearItemsLayout Orientation="Vertical" ItemSpacing="10" />
+            </CollectionView.ItemsLayout>
+
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:Attendee">
+                    <SwipeView>
+                        <SwipeView.RightItems>
+                            <SwipeItems>
+                                <SwipeItem Text="Delete"
+                                           BackgroundColor="{StaticResource Danger}"
+                                           Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ParticipantsViewModel}}, Path=DeleteAttendeeCommand}"
+                                           CommandParameter="{Binding .}" />
+                            </SwipeItems>
+                        </SwipeView.RightItems>
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ParticipantsViewModel}}, Path=ViewDetailCommand}"
+                                                  CommandParameter="{Binding .}" />
+                        </Border.GestureRecognizers>
+                        <components:AttendeeCard Attendee="{Binding .}" />
+                    </SwipeView>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+
+            <!-- Empty State -->
+            <CollectionView.EmptyView>
+                <VerticalStackLayout HorizontalOptions="Center"
+                                     VerticalOptions="Center"
+                                     Spacing="16"
+                                     Padding="40">
+                    <Border BackgroundColor="{AppThemeBinding Light={StaticResource SurfaceSecondary}, Dark={StaticResource DarkSurfaceSecondary}}"
+                            StrokeShape="RoundRectangle 20"
+                            StrokeThickness="0"
+                            WidthRequest="80" HeightRequest="80"
+                            HorizontalOptions="Center">
+                        <Label Text="&#xf007;"
+                               FontFamily="FAS"
+                               FontSize="32"
+                               TextColor="{AppThemeBinding Light={StaticResource TextTertiary}, Dark={StaticResource DarkTextTertiary}}"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center" />
+                    </Border>
+                    <Label Text="No participants yet"
+                           Style="{StaticResource Headline}"
+                           HorizontalOptions="Center" />
+                    <Label Text="Register attendees to get started"
+                           Style="{StaticResource BodySmall}"
+                           HorizontalOptions="Center"
+                           HorizontalTextAlignment="Center" />
+                </VerticalStackLayout>
+            </CollectionView.EmptyView>
+        </CollectionView>
+    </Grid>
 
 </ContentPage>

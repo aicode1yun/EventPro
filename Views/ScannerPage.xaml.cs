@@ -7,6 +7,7 @@ namespace Ticket.Views
     public partial class ScannerPage : ContentPage
     {
         private readonly ScannerViewModel _viewModel;
+        private bool _animating;
 
         public ScannerPage(ScannerViewModel viewModel)
         {
@@ -64,16 +65,30 @@ namespace Ticket.Views
                 TorchButton.IsVisible = false;
                 await DisplayAlertAsync("Camera Error", $"Unable to start camera: {ex.Message}", "OK");
             }
+
+            AnimateScanLine();
         }
 
         protected override async void OnDisappearing()
         {
             base.OnDisappearing();
+            _animating = false;
             await Dispatcher.DispatchAsync(() => _viewModel.IsScanning = false);
             if (BarcodeReader.IsTorchOn)
             {
                 BarcodeReader.IsTorchOn = false;
                 _viewModel.IsTorchOn = false;
+            }
+        }
+
+        private async void AnimateScanLine()
+        {
+            _animating = true;
+            var frameHeight = 260;
+            while (_animating)
+            {
+                await ScanLineContainer.TranslateToAsync(0, frameHeight, 1200, Easing.SinInOut);
+                await ScanLineContainer.TranslateToAsync(0, 0, 1200, Easing.SinInOut);
             }
         }
     }

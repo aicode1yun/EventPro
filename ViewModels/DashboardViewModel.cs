@@ -70,5 +70,11 @@ namespace Ticket.ViewModels
         {
             await Shell.Current.GoToAsync("//participants");
         }
+
+        [RelayCommand]
+        private async Task GoToSettingsAsync()
+        {
+            await Shell.Current.GoToAsync("//settings");
+        }
     }
 }

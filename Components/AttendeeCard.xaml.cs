@@ -37,6 +37,19 @@ namespace Ticket.Components
             TicketTypeLabel.Text = attendee.TicketType;
             DateLabel.Text = attendee.RegisteredAt.ToString("MMM dd");
 
+            // Show photo if available
+            if (!string.IsNullOrEmpty(attendee.PhotoUrl))
+            {
+                PhotoImage.Source = ImageSource.FromUri(new Uri(attendee.PhotoUrl));
+                PhotoImage.IsVisible = true;
+                InitialsLabel.IsVisible = false;
+            }
+            else
+            {
+                PhotoImage.IsVisible = false;
+                InitialsLabel.IsVisible = true;
+            }
+
             if (attendee.IsCheckedIn)
             {
                 StatusBadge.BackgroundColor = Color.FromArgb("#10B981");
